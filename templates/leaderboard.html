@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+
+{% block title %}Leaderboard - CodeXam{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="text-center mb-4">
+            <h2><i class="fas fa-trophy text-warning"></i> Leaderboard</h2>
+            <p class="text-muted">Top performers ranked by problems solved</p>
+        </div>
+
+        {% if leaderboard %}
+            <div class="card">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th width="80">Rank</th>
+                                    <th>User</th>
+                                    <th width="150">Problems Solved</th>
+                                    <th width="150">Total Submissions</th>
+                                    <th width="120">Success Rate</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for entry in leaderboard %}
+                                <tr {% if loop.index <= 3 %}class="table-warning"{% endif %}>
+                                    <td class="text-center">
+                                        {% if loop.index == 1 %}
+                                            <i class="fas fa-crown text-warning fs-4"></i>
+                                        {% elif loop.index == 2 %}
+                                            <i class="fas fa-medal text-secondary fs-5"></i>
+                                        {% elif loop.index == 3 %}
+                                            <i class="fas fa-medal text-warning fs-5"></i>
+                                        {% else %}
+                                            <span class="fs-5 fw-bold">#{{ loop.index }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar-circle me-3">
+                                                {{ entry.user_name[0].upper() }}
+                                            </div>
+                                            <div>
+                                                <strong>{{ entry.user_name }}</strong>
+                                                {% if loop.index <= 3 %}
+                                                    <span class="badge bg-primary ms-2">
+                                                        {% if loop.index == 1 %}Champion
+                                                        {% elif loop.index == 2 %}Runner-up
+                                                        {% else %}3rd Place{% endif %}
+                                                    </span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge bg-success fs-6 px-3 py-2">
+                                            {{ entry.problems_solved }}
+                                        </span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="text-muted">{{ entry.total_submissions }}</span>
+                                    </td>
+                                    <td class="text-center">
+                                        {% set success_rate = (entry.problems_solved / entry.total_submissions * 100) if entry.total_submissions > 0 else 0 %}
+                                        <div class="progress" style="height: 20px;">
+                                            <div class="progress-bar 
+                                                {% if success_rate >= 80 %}bg-success
+                                                {% elif success_rate >= 60 %}bg-warning
+                                                {% else %}bg-danger{% endif %}" 
+                                                role="progressbar" 
+                                                style="width: {{ success_rate }}%"
+                                                aria-valuenow="{{ success_rate }}" 
+                                                aria-valuemin="0" 
+                                                aria-valuemax="100">
+                                                {{ "%.0f"|format(success_rate) }}%
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Leaderboard Statistics -->
+            <div class="row mt-4">
+                <div class="col-md-4">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-users fa-2x text-primary mb-2"></i>
+                            <h5 class="card-title">{{ leaderboard|length }}</h5>
+                            <p class="card-text">Active Users</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-code fa-2x text-success mb-2"></i>
+                            <h5 class="card-title">{{ leaderboard|sum(attribute='problems_solved') }}</h5>
+                            <p class="card-text">Total Problems Solved</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-paper-plane fa-2x text-info mb-2"></i>
+                            <h5 class="card-title">{{ leaderboard|sum(attribute='total_submissions') }}</h5>
+                            <p class="card-text">Total Submissions</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-trophy fa-4x text-muted mb-3"></i>
+                <h4 class="text-muted">No rankings yet</h4>
+                <p class="text-muted">The leaderboard will show rankings once users start solving problems.</p>
+                <a href="{{ url_for('problems_list') }}" class="btn btn-primary">
+                    <i class="fas fa-code"></i> Start Solving Problems
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<style>
+.avatar-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.table-warning {
+    background-color: rgba(255, 193, 7, 0.1) !important;
+}
+
+.progress {
+    border-radius: 10px;
+}
+
+.card {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+.fa-crown {
+    color: #ffd700 !important;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.fa-medal {
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+}
+</style>
+{% endblock %}

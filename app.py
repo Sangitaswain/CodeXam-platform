@@ -4,9 +4,9 @@ Main Flask application entry point
 """
 
 import os
-from flask import Flask, render_template, request, jsonify, session, redirect, url_for
+from flask import Flask
 from dotenv import load_dotenv
-from database import init_app, get_platform_stats
+from database import init_app
 
 # Load environment variables
 load_dotenv()
@@ -33,43 +33,17 @@ def create_app(testing=False):
     # Initialize database
     init_app(app)
     
-    # Basic route for testing
-    @app.route('/')
-    def index():
-        """Landing page route."""
-        try:
-            stats = get_platform_stats()
-            return render_template('index.html', stats=stats)
-        except Exception as e:
-            # Fallback if database is not available
-            stats = {
-                'total_problems': 0,
-                'total_submissions': 0,
-                'total_users': 0,
-                'last_updated': 'N/A'
-            }
-            return render_template('index.html', stats=stats)
+    # Register routes
+    from routes import register_routes
+    register_routes(app)
     
-    @app.route('/health')
-    def health_check():
-        """Health check endpoint for testing."""
-        try:
-            stats = get_platform_stats()
-            return jsonify({
-                'status': 'healthy',
-                'message': 'CodeXam Flask application is running',
-                'debug': app.config['DEBUG'],
-                'database': 'connected',
-                'stats': stats
-            })
-        except Exception as e:
-            return jsonify({
-                'status': 'degraded',
-                'message': 'CodeXam Flask application is running',
-                'debug': app.config['DEBUG'],
-                'database': 'error',
-                'error': str(e)
-            })
+    # Register template filters
+    @app.template_filter('nl2br')
+    def nl2br_filter(text):
+        """Convert newlines to HTML line breaks."""
+        if not text:
+            return text
+        return text.replace('\n', '<br>')
     
     return app
 
