@@ -1,0 +1,26 @@
+# CodeXam - Python Dependencies
+
+# Web Framework
+Flask==2.3.3
+Werkzeug==2.3.7
+
+# Template Engine (included with Flask)
+Jinja2==3.1.2
+MarkupSafe==2.1.3
+
+# Environment Variables
+python-dotenv==1.0.0
+
+# HTTP utilities
+click==8.1.7
+itsdangerous==2.1.2
+
+# Development and Testing (optional)
+pytest==7.4.2
+pytest-cov==4.1.0
+
+# Future dependencies (commented out for now)
+# WTForms==3.0.1          # Form handling and validation
+# Flask-WTF==1.1.1        # Flask-WTForms integration
+# requests==2.31.0        # HTTP requests for external APIs
+# gunicorn==21.2.0        # WSGI server for production

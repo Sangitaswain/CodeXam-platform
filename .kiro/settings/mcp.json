@@ -1,0 +1,65 @@
+{
+    "mcpServers": {
+        "sqlite": {
+            "command": "uvx",
+            "args": [
+                "mcp-server-sqlite",
+                "--db-path",
+                "./database.db"
+            ],
+            "env": {
+                "FASTMCP_LOG_LEVEL": "ERROR"
+            },
+            "disabled": false,
+            "autoApprove": [
+                "read_query",
+                "list_tables",
+                "describe_table",
+                "write_query",
+                "create_table",
+                "append_insight"
+            ]
+        },
+        "time": {
+            "command": "uvx",
+            "args": [
+                "mcp-server-time"
+            ],
+            "env": {
+                "FASTMCP_LOG_LEVEL": "ERROR"
+            },
+            "disabled": false,
+            "autoApprove": [
+                "get_current_time",
+                "convert_time"
+            ]
+        },
+        "http": {
+            "command": "uvx",
+            "args": [
+                "mcp-server-fetch"
+            ],
+            "env": {
+                "FASTMCP_LOG_LEVEL": "ERROR"
+            },
+            "disabled": false,
+            "autoApprove": [
+                "fetch"
+            ]
+        },
+        "web-search": {
+            "command": "uvx",
+            "args": [
+                "mcp-server-brave-search"
+            ],
+            "env": {
+                "FASTMCP_LOG_LEVEL": "ERROR",
+                "BRAVE_API_KEY": ""
+            },
+            "disabled": true,
+            "autoApprove": [
+                "brave_web_search"
+            ]
+        }
+    }
+}
