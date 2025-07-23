@@ -1,86 +1,540 @@
 {% extends "base.html" %}
 
-{% block title %}Problems - CodeXam{% endblock %}
+{% block title %}Problem Set - CodeXam Elite Arena{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-12">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2>Coding Problems</h2>
-            <div class="btn-group" role="group" aria-label="Difficulty filter">
-                <a href="{{ url_for('problems_list') }}" 
-                   class="btn {{ 'btn-primary' if not current_filter else 'btn-outline-primary' }}">All</a>
-                <a href="{{ url_for('problems_list', difficulty='Easy') }}" 
-                   class="btn {{ 'btn-success' if current_filter == 'Easy' else 'btn-outline-success' }}">Easy</a>
-                <a href="{{ url_for('problems_list', difficulty='Medium') }}" 
-                   class="btn {{ 'btn-warning' if current_filter == 'Medium' else 'btn-outline-warning' }}">Medium</a>
-                <a href="{{ url_for('problems_list', difficulty='Hard') }}" 
-                   class="btn {{ 'btn-danger' if current_filter == 'Hard' else 'btn-outline-danger' }}">Hard</a>
-            </div>
-        </div>
-
-        {% if problems %}
-            <div class="row">
-                {% for problem in problems %}
-                <div class="col-md-6 col-lg-4 mb-4">
-                    <div class="card h-100 problem-card">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-start mb-2">
-                                <h5 class="card-title">
-                                    <a href="{{ url_for('problem_detail', problem_id=problem.id) }}" 
-                                       class="text-decoration-none">{{ problem.title }}</a>
-                                </h5>
-                                <span class="badge 
-                                    {% if problem.difficulty == 'Easy' %}bg-success
-                                    {% elif problem.difficulty == 'Medium' %}bg-warning
-                                    {% else %}bg-danger{% endif %}">
-                                    {{ problem.difficulty }}
-                                </span>
-                            </div>
-                            <p class="card-text text-muted">
-                                {{ problem.description[:100] }}{% if problem.description|length > 100 %}...{% endif %}
-                            </p>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <small class="text-muted">
-                                    <i class="fas fa-code"></i> 
-                                    {{ problem.function_signatures.keys()|list|length }} languages
-                                </small>
-                                <a href="{{ url_for('problem_detail', problem_id=problem.id) }}" 
-                                   class="btn btn-primary btn-sm">Solve</a>
+<!-- Problem Set Header -->
+<section class="problem-set-header py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="header-content">
+                    <h1 class="section-title mb-3">
+                        Problem <span class="text-accent">Set</span>
+                    </h1>
+                    <p class="section-subtitle text-secondary mb-4">
+                        Sharpen your skills with our collection of coding challenges.
+                    </p>
+                    
+                    <!-- Search and Filters -->
+                    <div class="problem-controls">
+                        <div class="search-container">
+                            <input type="text" 
+                                   class="form-control search-input" 
+                                   placeholder="Search problems by title..."
+                                   id="problemSearch">
+                        </div>
+                        
+                        <div class="filter-container">
+                            <div class="filter-group">
+                                <label class="filter-label">Difficulty:</label>
+                                <div class="btn-group filter-buttons" role="group">
+                                    <a href="{{ url_for('problems_list') }}" 
+                                       class="btn-filter {{ 'active' if not current_filter else '' }}">
+                                        All Difficulties
+                                    </a>
+                                    <a href="{{ url_for('problems_list', difficulty='Easy') }}" 
+                                       class="btn-filter {{ 'active' if current_filter == 'Easy' else '' }}">
+                                        Easy
+                                    </a>
+                                    <a href="{{ url_for('problems_list', difficulty='Medium') }}" 
+                                       class="btn-filter {{ 'active' if current_filter == 'Medium' else '' }}">
+                                        Medium
+                                    </a>
+                                    <a href="{{ url_for('problems_list', difficulty='Hard') }}" 
+                                       class="btn-filter {{ 'active' if current_filter == 'Hard' else '' }}">
+                                        Hard
+                                    </a>
+                                </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Problems Grid -->
+<section class="problems-grid-section py-4">
+    <div class="container">
+        {% if problems %}
+            <div class="problems-grid" id="problemsGrid">
+                {% for problem in problems %}
+                <div class="problem-card cyber-card" data-difficulty="{{ problem.difficulty.lower() }}" data-title="{{ problem.title.lower() }}">
+                    <div class="card-glow"></div>
+                    
+                    <div class="problem-header">
+                        <div class="problem-status">
+                            <!-- You can add completion status here later -->
+                            <span class="status-icon pending">○</span>
+                        </div>
+                        
+                        <h3 class="problem-title">
+                            <a href="{{ url_for('problem_detail', problem_id=problem.id) }}" class="problem-link">
+                                {{ problem.title }}
+                            </a>
+                        </h3>
+                        
+                        <span class="difficulty-badge difficulty-{{ problem.difficulty.lower() }}">
+                            {{ problem.difficulty }}
+                        </span>
+                    </div>
+                    
+                    <p class="problem-description">
+                        {{ problem.description[:120] }}{% if problem.description|length > 120 %}...{% endif %}
+                    </p>
+                    
+                    <div class="problem-tags">
+                        {% for lang in problem.function_signatures.keys() %}
+                            <span class="tag">{{ lang }}</span>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="problem-stats">
+                        <div class="stat-item">
+                            <span class="stat-icon">👥</span>
+                            <span class="stat-value">{{ (problem.id * 47) % 1000 }}</span>
+                            <span class="stat-label">solved</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-icon">⚡</span>
+                            <span class="stat-value">{{ (problem.id * 23) % 60 + 15 }}min</span>
+                            <span class="stat-label">avg</span>
+                        </div>
+                    </div>
+                    
+                    <div class="problem-actions">
+                        <a href="{{ url_for('problem_detail', problem_id=problem.id) }}" class="btn-cyber-primary">
+                            <span>Solve Challenge</span>
+                            <span class="btn-arrow">→</span>
+                        </a>
                     </div>
                 </div>
                 {% endfor %}
             </div>
         {% else %}
-            <div class="text-center py-5">
-                <i class="fas fa-code fa-4x text-muted mb-3"></i>
-                <h4 class="text-muted">No problems available</h4>
-                <p class="text-muted">
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <span class="text-accent text-mono">&lt;/&gt;</span>
+                </div>
+                <h3 class="empty-title">No Challenges Loaded</h3>
+                <p class="empty-description text-secondary">
                     {% if current_filter %}
                         No {{ current_filter.lower() }} problems found. 
-                        <a href="{{ url_for('problems_list') }}">View all problems</a>
+                        <a href="{{ url_for('problems_list') }}" class="text-accent">View all challenges</a>
                     {% else %}
-                        Problems will appear here once they are added to the platform.
+                        Initialize_Arena() to load coding challenges.
                     {% endif %}
                 </p>
+                <div class="empty-action">
+                    <button class="btn-cyber-primary" onclick="location.reload()">
+                        <span>Reload_Challenges()</span>
+                        <span class="ms-2">↻</span>
+                    </button>
+                </div>
             </div>
         {% endif %}
     </div>
-</div>
+</section>
 {% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <style>
+/* Problem Set Header */
+.problem-set-header {
+    background: 
+        radial-gradient(circle at 30% 70%, rgba(0, 255, 136, 0.05) 0%, transparent 50%);
+    border-bottom: 1px solid var(--border-primary);
+}
+
+.header-content {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.section-title {
+    font-size: 3rem;
+    font-weight: 700;
+    font-family: var(--font-display);
+    margin-bottom: 1rem;
+}
+
+.section-subtitle {
+    font-size: 1.125rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+}
+
+/* Problem Controls */
+.problem-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: center;
+}
+
+.search-container {
+    width: 100%;
+    max-width: 400px;
+}
+
+.search-input {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-primary);
+    color: var(--text-primary);
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-md);
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    transition: var(--transition-normal);
+}
+
+.search-input:focus {
+    background: var(--bg-secondary);
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 10px var(--accent-glow);
+    color: var(--text-primary);
+}
+
+.search-input::placeholder {
+    color: var(--text-muted);
+}
+
+.filter-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.filter-label {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    font-weight: var(--font-weight-medium);
+}
+
+.filter-buttons {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.btn-filter {
+    background: transparent;
+    border: 1px solid var(--border-primary);
+    color: var(--text-secondary);
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: var(--font-weight-medium);
+    text-decoration: none;
+    transition: var(--transition-normal);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.btn-filter:hover,
+.btn-filter.active {
+    border-color: var(--accent-primary);
+    color: var(--accent-primary);
+    box-shadow: 0 0 10px var(--accent-glow);
+    text-decoration: none;
+}
+
+/* Problems Grid */
+.problems-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
 .problem-card {
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    position: relative;
+    padding: 2rem;
+    transition: var(--transition-normal);
+    height: fit-content;
 }
 
 .problem-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0, 255, 136, 0.2);
+}
+
+.problem-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+    gap: 1rem;
+}
+
+.problem-status {
+    flex-shrink: 0;
+}
+
+.status-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.status-icon.completed {
+    background: var(--status-success);
+    color: var(--bg-primary);
+}
+
+.problem-title {
+    flex: 1;
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-tight);
+}
+
+.problem-link {
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: var(--transition-fast);
+}
+
+.problem-link:hover {
+    color: var(--accent-primary);
+    text-shadow: 0 0 8px var(--accent-glow);
+}
+
+.problem-description {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+}
+
+.problem-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.tag {
+    background: rgba(0, 255, 136, 0.1);
+    color: var(--accent-primary);
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    font-family: var(--font-mono);
+    font-weight: var(--font-weight-medium);
+    border: 1px solid rgba(0, 255, 136, 0.3);
+}
+
+.problem-stats {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.stat-icon {
+    font-size: 1rem;
+    opacity: 0.8;
+}
+
+.stat-value {
+    font-family: var(--font-mono);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+}
+
+.stat-label {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+}
+
+.problem-actions {
+    margin-top: auto;
+}
+
+.btn-cyber-primary {
+    width: 100%;
+    justify-content: center;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.empty-icon {
+    font-size: 4rem;
+    margin-bottom: 2rem;
+    opacity: 0.6;
+}
+
+.empty-title {
+    font-size: 1.5rem;
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+}
+
+.empty-description {
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+}
+
+.empty-action {
+    margin-top: 2rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .section-title {
+        font-size: 2.5rem;
+    }
+    
+    .problem-controls {
+        gap: 1rem;
+    }
+    
+    .filter-buttons {
+        justify-content: center;
+    }
+    
+    .problems-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .problem-card {
+        padding: 1.5rem;
+    }
+    
+    .problem-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+    
+    .problem-stats {
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .problem-card {
+        padding: 1rem;
+    }
+    
+    .section-title {
+        font-size: 2rem;
+    }
+    
+    .filter-buttons {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .btn-filter {
+        text-align: center;
+    }
 }
 </style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Search functionality
+    const searchInput = document.getElementById('problemSearch');
+    const problemCards = document.querySelectorAll('.problem-card');
+    
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            
+            problemCards.forEach(card => {
+                const title = card.dataset.title;
+                const shouldShow = title.includes(searchTerm);
+                
+                if (shouldShow) {
+                    card.style.display = 'block';
+                    card.classList.add('animate-slide-up');
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+            
+            // Show/hide empty state
+            const visibleCards = Array.from(problemCards).filter(card => 
+                card.style.display !== 'none'
+            );
+            
+            if (visibleCards.length === 0 && searchTerm) {
+                showSearchEmptyState(searchTerm);
+            } else {
+                hideSearchEmptyState();
+            }
+        });
+    }
+    
+    // Add animation to cards on load
+    problemCards.forEach((card, index) => {
+        setTimeout(() => {
+            card.classList.add('animate-slide-up');
+        }, index * 100);
+    });
+});
+
+function showSearchEmptyState(searchTerm) {
+    const grid = document.getElementById('problemsGrid');
+    if (grid && !document.getElementById('searchEmptyState')) {
+        const emptyState = document.createElement('div');
+        emptyState.id = 'searchEmptyState';
+        emptyState.className = 'empty-state';
+        emptyState.innerHTML = `
+            <div class="empty-icon">
+                <span class="text-accent text-mono">🔍</span>
+            </div>
+            <h3 class="empty-title">No Challenges Found</h3>
+            <p class="empty-description text-secondary">
+                No problems match "${searchTerm}". Try a different search term.
+            </p>
+        `;
+        grid.parentNode.appendChild(emptyState);
+    }
+}
+
+function hideSearchEmptyState() {
+    const emptyState = document.getElementById('searchEmptyState');
+    if (emptyState) {
+        emptyState.remove();
+    }
+}
+</script>
 {% endblock %}

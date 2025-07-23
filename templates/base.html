@@ -3,60 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}CodeXam - Coding Challenge Platform{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}CodeXam - Elite Coding Arena. The hardcore coding challenge engine for serious developers.{% endblock %}">
+    <meta name="keywords" content="coding, programming, challenges, algorithms, interview prep, python, javascript, java, c++">
+    <meta name="author" content="CodeXam">
+    
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="{% block og_title %}CodeXam - Elite Coding Arena{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}Master algorithms, dominate interviews, and prove your skills in the digital battleground.{% endblock %}">
+    <meta property="og:image" content="{{ url_for('static', filename='img/og-image.png') }}">
+    
+    <!-- Theme Colors -->
+    <meta name="theme-color" content="#00ff88">
+    <meta name="msapplication-TileColor" content="#0a0a0a">
+    
+    <title>{% block title %}CodeXam - Elite Coding Arena{% endblock %}</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='img/apple-touch-icon.png') }}">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
     <!-- Custom CSS -->
     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
     
     {% block extra_css %}{% endblock %}
 </head>
-<body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <div class="container">
-            <a class="navbar-brand" href="{{ url_for('index') }}">
-                <strong>CodeXam</strong>
-            </a>
+<body class="{% block body_class %}{% endblock %}">
+    <!-- Cyber Navigation -->
+    <nav class="cyber-navbar" role="navigation" aria-label="Main navigation">
+        <div class="navbar-container">
+            <!-- Brand Section (Terminal Style) -->
+            <div class="navbar-brand">
+                <a href="{{ url_for('index') }}" class="brand-link" aria-label="CodeXam Home">
+                    <span class="brand-icon">&lt;/&gt;</span>
+                    <span class="brand-text">CodeXam</span>
+                    <span class="brand-status animate-pulse">●</span>
+                </a>
+            </div>
             
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
+            <!-- Mobile Menu Toggle -->
+            <button class="navbar-toggle d-lg-none" 
+                    type="button" 
+                    aria-label="Toggle navigation menu" 
+                    aria-expanded="false"
+                    data-bs-toggle="collapse" 
+                    data-bs-target="#navbarNav">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
             </button>
             
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('problems_list') }}">Problems</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('leaderboard') }}">Leaderboard</a>
-                    </li>
-                    {% if session.user_name %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('submissions_history') }}">My Submissions</a>
-                    </li>
-                    {% endif %}
-                </ul>
+            <!-- Navigation Links (Cyber Style) -->
+            <div class="navbar-nav collapse navbar-collapse" id="navbarNav">
+                <a href="{{ url_for('problems_list') }}" 
+                   class="nav-link {% if request.endpoint == 'problems_list' %}active{% endif %}" 
+                   data-text="Problems">
+                    <span class="nav-icon">⚡</span>
+                    <span>Problems</span>
+                </a>
                 
-                <ul class="navbar-nav">
-                    {% if session.user_name %}
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            {{ session.user_name }}
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{{ url_for('submissions_history') }}">My Submissions</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="{{ url_for('set_name') }}">Change Name</a></li>
-                        </ul>
-                    </li>
-                    {% else %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('set_name') }}">Set Name</a>
-                    </li>
-                    {% endif %}
-                </ul>
+                {% if session.user_name and session.user_name != 'Anonymous' %}
+                <a href="{{ url_for('submissions_history') }}" 
+                   class="nav-link {% if request.endpoint == 'submissions_history' %}active{% endif %}" 
+                   data-text="Submissions">
+                    <span class="nav-icon">📊</span>
+                    <span>Submissions</span>
+                </a>
+                {% endif %}
+                
+                <a href="{{ url_for('leaderboard') }}" 
+                   class="nav-link {% if request.endpoint == 'leaderboard' %}active{% endif %}" 
+                   data-text="Leaderboard">
+                    <span class="nav-icon">🏆</span>
+                    <span>Leaderboard</span>
+                </a>
+                
+                <!-- Admin Link (if applicable) -->
+                {% if session.is_admin %}
+                <a href="{{ url_for('admin_panel') }}" 
+                   class="nav-link {% if request.endpoint == 'admin_panel' %}active{% endif %}" 
+                   data-text="Admin">
+                    <span class="nav-icon">⚙️</span>
+                    <span>Admin</span>
+                </a>
+                {% endif %}
+            </div>
+            
+            <!-- User Section (Hacker Style) -->
+            <div class="navbar-user">
+                <div class="user-info">
+                    <span class="user-status animate-pulse">●</span>
+                    <span class="user-name">{{ session.user_name or 'Anonymous' }}</span>
+                </div>
+                
+                {% if session.user_name and session.user_name != 'Anonymous' %}
+                    <button class="btn-cyber btn-sm" 
+                            data-bs-toggle="modal" 
+                            data-bs-target="#changeNameModal">
+                        <span>Change Name</span>
+                    </button>
+                {% else %}
+                    <button class="btn-cyber btn-sm" 
+                            data-bs-toggle="modal" 
+                            data-bs-target="#setNameModal">
+                        <span>Login</span>
+                    </button>
+                {% endif %}
             </div>
         </div>
     </nav>
@@ -66,29 +126,402 @@
         {% if messages %}
             <div class="container mt-3">
                 {% for category, message in messages %}
-                    <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show animate-slide-up" 
+                         role="alert">
+                        <div class="d-flex align-items-center">
+                            {% if category == 'success' %}
+                                <span class="me-2">✅</span>
+                            {% elif category == 'error' %}
+                                <span class="me-2">❌</span>
+                            {% elif category == 'warning' %}
+                                <span class="me-2">⚠️</span>
+                            {% else %}
+                                <span class="me-2">ℹ️</span>
+                            {% endif %}
+                            {{ message }}
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 {% endfor %}
             </div>
         {% endif %}
     {% endwith %}
 
-    <!-- Main content -->
-    <main class="container my-4">
+    <!-- Main Content -->
+    <main class="main-content" role="main">
         {% block content %}{% endblock %}
     </main>
 
     <!-- Footer -->
-    <footer class="bg-light py-4 mt-5">
-        <div class="container text-center">
-            <p class="mb-0">&copy; 2024 CodeXam - Coding Challenge Platform</p>
+    <footer class="cyber-footer mt-5" role="contentinfo">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <span class="brand-icon">&lt;/&gt;</span>
+                    <span class="brand-text">CodeXam</span>
+                </div>
+                
+                <div class="footer-links">
+                    <a href="{{ url_for('index') }}">Home</a>
+                    <a href="{{ url_for('problems_list') }}">Problems</a>
+                    <a href="{{ url_for('leaderboard') }}">Leaderboard</a>
+                </div>
+                
+                <div class="footer-info">
+                    <p class="mb-0">&copy; 2024 CodeXam - Elite Coding Arena</p>
+                    <p class="mb-0 text-muted">
+                        <span class="text-mono">System Status:</span> 
+                        <span class="text-accent animate-pulse">ONLINE</span>
+                    </p>
+                </div>
+            </div>
         </div>
     </footer>
 
+    <!-- Set Name Modal -->
+    <div class="modal fade" id="setNameModal" tabindex="-1" aria-labelledby="setNameModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content cyber-card">
+                <div class="modal-header border-bottom border-secondary">
+                    <h5 class="modal-title text-accent" id="setNameModalLabel">
+                        <span class="me-2">🚀</span>Initialize Your Elite Journey
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-secondary mb-4">
+                        Join the ranks of elite developers mastering their craft through battle-tested challenges.
+                    </p>
+                    <form action="{{ url_for('set_name') }}" method="POST" id="setNameForm">
+                        <div class="mb-3">
+                            <label for="userName" class="form-label text-accent">Your Handle</label>
+                            <input type="text" 
+                                   class="form-control bg-tertiary border-primary text-primary" 
+                                   id="userName" 
+                                   name="user_name"
+                                   placeholder="Enter your coding handle"
+                                   maxlength="50"
+                                   required
+                                   aria-describedby="nameHelp">
+                            <div id="nameHelp" class="form-text text-muted">
+                                This will be displayed on the leaderboard and with your submissions.
+                            </div>
+                        </div>
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="rememberName" name="remember" checked>
+                            <label class="form-check-label text-secondary" for="rememberName">
+                                Remember my handle for future sessions
+                            </label>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-top border-secondary">
+                    <button type="button" class="btn-cyber-secondary" data-bs-dismiss="modal">
+                        Skip (Stay Anonymous)
+                    </button>
+                    <button type="submit" form="setNameForm" class="btn-cyber-primary">
+                        <span>Enter_Arena()</span>
+                        <span class="ms-2">→</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Change Name Modal -->
+    <div class="modal fade" id="changeNameModal" tabindex="-1" aria-labelledby="changeNameModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content cyber-card">
+                <div class="modal-header border-bottom border-secondary">
+                    <h5 class="modal-title text-accent" id="changeNameModalLabel">
+                        <span class="me-2">⚙️</span>Update Your Handle
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ url_for('set_name') }}" method="POST" id="changeNameForm">
+                        <div class="mb-3">
+                            <label for="newUserName" class="form-label text-accent">New Handle</label>
+                            <input type="text" 
+                                   class="form-control bg-tertiary border-primary text-primary" 
+                                   id="newUserName" 
+                                   name="user_name"
+                                   value="{{ session.user_name or '' }}"
+                                   maxlength="50"
+                                   required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-top border-secondary">
+                    <button type="button" class="btn-cyber-secondary" data-bs-dismiss="modal">
+                        Cancel
+                    </button>
+                    <button type="submit" form="changeNameForm" class="btn-cyber-primary">
+                        <span>Update_Handle()</span>
+                        <span class="ms-2">→</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script>
+        // Cyber theme enhancements
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add glow effect to active elements
+            const activeElements = document.querySelectorAll('.nav-link.active');
+            activeElements.forEach(el => {
+                el.classList.add('animate-glow');
+            });
+            
+            // Terminal-style typing effect for status messages
+            const statusElements = document.querySelectorAll('.animate-pulse');
+            statusElements.forEach(el => {
+                setInterval(() => {
+                    el.style.opacity = el.style.opacity === '0.5' ? '1' : '0.5';
+                }, 1000);
+            });
+            
+            // Mobile menu toggle animation
+            const navToggle = document.querySelector('.navbar-toggle');
+            if (navToggle) {
+                navToggle.addEventListener('click', function() {
+                    this.classList.toggle('active');
+                });
+            }
+            
+            // Auto-dismiss alerts after 5 seconds
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    const bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                }, 5000);
+            });
+        });
+        
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Ctrl/Cmd + K to focus search (if available)
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                const searchInput = document.querySelector('input[type="search"]');
+                if (searchInput) {
+                    searchInput.focus();
+                }
+            }
+            
+            // Escape to close modals
+            if (e.key === 'Escape') {
+                const openModals = document.querySelectorAll('.modal.show');
+                openModals.forEach(modal => {
+                    const bsModal = bootstrap.Modal.getInstance(modal);
+                    if (bsModal) {
+                        bsModal.hide();
+                    }
+                });
+            }
+        });
+    </script>
+    
     {% block extra_js %}{% endblock %}
 </body>
 </html>
+
+<style>
+/* Additional styles for base template */
+.cyber-footer {
+    background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+    border-top: 1px solid var(--border-primary);
+    padding: var(--space-8) 0 var(--space-6) 0;
+    margin-top: auto;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+}
+
+.footer-brand {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-family: var(--font-mono);
+    font-weight: var(--font-weight-bold);
+    color: var(--text-primary);
+}
+
+.footer-brand .brand-icon {
+    color: var(--accent-primary);
+    text-shadow: 0 0 10px var(--accent-glow);
+}
+
+.footer-links {
+    display: flex;
+    gap: var(--space-4);
+}
+
+.footer-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: var(--transition-fast);
+    font-size: var(--text-sm);
+}
+
+.footer-links a:hover {
+    color: var(--accent-primary);
+    text-shadow: 0 0 8px var(--accent-glow);
+}
+
+.footer-info {
+    text-align: right;
+    font-size: var(--text-sm);
+}
+
+.footer-info p {
+    margin-bottom: 0.25rem;
+}
+
+/* Mobile hamburger menu */
+.navbar-toggle {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    background: transparent;
+    border: none;
+    padding: var(--space-2);
+    cursor: pointer;
+}
+
+.hamburger-line {
+    width: 24px;
+    height: 2px;
+    background: var(--accent-primary);
+    transition: var(--transition-normal);
+    border-radius: 2px;
+}
+
+.navbar-toggle.active .hamburger-line:nth-child(1) {
+    transform: rotate(45deg) translate(6px, 6px);
+}
+
+.navbar-toggle.active .hamburger-line:nth-child(2) {
+    opacity: 0;
+}
+
+.navbar-toggle.active .hamburger-line:nth-child(3) {
+    transform: rotate(-45deg) translate(6px, -6px);
+}
+
+/* Modal customizations */
+.modal-content {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-primary);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+}
+
+.modal-header {
+    background: var(--bg-tertiary);
+}
+
+.form-control {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-primary);
+    color: var(--text-primary);
+}
+
+.form-control:focus {
+    background: var(--bg-tertiary);
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 10px var(--accent-glow);
+    color: var(--text-primary);
+}
+
+.form-label {
+    color: var(--text-primary);
+    font-weight: var(--font-weight-medium);
+}
+
+.form-text {
+    color: var(--text-muted);
+}
+
+.form-check-input:checked {
+    background-color: var(--accent-primary);
+    border-color: var(--accent-primary);
+}
+
+/* Alert customizations */
+.alert {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-primary);
+    color: var(--text-primary);
+}
+
+.alert-success {
+    background: var(--status-success-bg);
+    border-color: var(--status-success-border);
+    color: var(--status-success);
+}
+
+.alert-danger {
+    background: var(--status-error-bg);
+    border-color: var(--status-error-border);
+    color: var(--status-error);
+}
+
+.alert-warning {
+    background: var(--status-warning-bg);
+    border-color: var(--status-warning-border);
+    color: var(--status-warning);
+}
+
+.alert-info {
+    background: var(--status-info-bg);
+    border-color: var(--status-info-border);
+    color: var(--status-info);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .navbar-nav {
+        position: fixed;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: var(--bg-secondary);
+        border-top: 1px solid var(--border-primary);
+        padding: var(--space-4);
+        transform: translateY(-100%);
+        transition: var(--transition-normal);
+        z-index: 999;
+        flex-direction: column;
+        gap: var(--space-2);
+    }
+    
+    .navbar-nav.show {
+        transform: translateY(0);
+    }
+    
+    .footer-content {
+        flex-direction: column;
+        text-align: center;
+        gap: var(--space-6);
+    }
+    
+    .footer-info {
+        text-align: center;
+    }
+    
+    .footer-links {
+        justify-content: center;
+    }
+}
+</style>

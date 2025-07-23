@@ -185,6 +185,14 @@ def register_routes(app):
         next_page = request.args.get('next', url_for('problems_list'))
         return render_template('set_name.html', next_page=next_page)
     
+    @app.route('/admin')
+    def admin_panel():
+        """Admin panel route (placeholder for future implementation)."""
+        # For now, redirect to problems list
+        # In the future, this will be a proper admin interface
+        flash('Admin panel is not yet implemented.', 'info')
+        return redirect(url_for('problems_list'))
+    
     @app.route('/health')
     def health_check():
         """Health check endpoint for monitoring."""
