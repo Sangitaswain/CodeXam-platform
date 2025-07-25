@@ -2,13 +2,14 @@
 
 {% block title %}CodeXam - Elite Coding Arena{% endblock %}
 
-{% block meta_description %}Master algorithms, dominate interviews, and prove your skills in the digital battleground. Join the elite coding arena.{% endblock %}
+{% block meta_description %}Master algorithms, dominate interviews, and prove your skills in the digital battleground.
+Join the elite coding arena.{% endblock %}
 
 {% block content %}
 <!-- Hero Section -->
 <section class="hero-section">
     <div class="container">
-        <div class="row align-items-center min-vh-100 py-5">
+        <div class="row align-items-center py-5" style="min-height: 80vh;">
             <div class="col-lg-6">
                 <div class="hero-content animate-slide-up">
                     <!-- Terminal-style prompt -->
@@ -16,27 +17,28 @@
                         <span class="text-accent text-mono">&gt; ELITE_CODER_MODE</span>
                         <span class="text-muted animate-pulse">_</span>
                     </div>
-                    
+
                     <!-- Main headline with glitch effect -->
                     <h1 class="hero-title mb-4">
                         Elite Coding <span class="text-accent">Arena</span>
                     </h1>
-                    
+
                     <!-- Subtitle -->
                     <p class="hero-subtitle mb-4 text-secondary">
-                        The hardcore coding challenge engine for serious developers. Master 
-                        algorithms, dominate interviews, and prove your skills in the digital 
+                        The hardcore coding challenge engine for serious developers. Master
+                        algorithms, dominate interviews, and prove your skills in the digital
                         battleground.
                     </p>
-                    
+
                     <!-- Terminal status -->
                     <div class="terminal-status mb-5">
                         <div class="status-line">
                             <span class="text-accent">●</span>
-                            <span class="text-mono text-sm">System ready. Challenges loading...</span>
+                            <span class="text-mono text-sm" style="margin-left: 8px;">System ready. Challenges
+                                loading...</span>
                         </div>
                     </div>
-                    
+
                     <!-- CTA Buttons -->
                     <div class="hero-actions">
                         <a href="{{ url_for('problems_list') }}" class="btn-cyber-primary me-3">
@@ -49,7 +51,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="col-lg-6">
                 <div class="hero-visual">
                     <!-- Code visualization -->
@@ -89,54 +91,116 @@
     <div class="container">
         <div class="row">
             <div class="col-12 text-center mb-5">
-                <h2 class="section-title">
+                <h2 class="stats-title">
                     <span class="text-accent">Combat</span> Statistics
                 </h2>
-                <p class="text-secondary">Real-time battlefield metrics</p>
+                <p class="stats-subtitle">Real-time battlefield metrics</p>
             </div>
         </div>
-        
+
         <div class="row g-4">
             <div class="col-md-3 col-sm-6">
-                <div class="stat-card cyber-card text-center">
-                    <div class="stat-icon mb-3">⚡</div>
-                    <div class="stat-value text-accent">{{ stats.total_problems or '500+' }}</div>
-                    <div class="stat-label text-muted">ACTIVE PROBLEMS</div>
-                    <div class="stat-trend text-success">
-                        <small>↗ +20 from last month</small>
+                <div class="enhanced-stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon-enhanced">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                            </svg>
+                        </div>
+                        <div class="stat-indicator active"></div>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number">{{ stats.total_problems or '6' }}</div>
+                        <div class="stat-title">Active Problems</div>
+                        <div class="stat-description">Challenges ready</div>
+                    </div>
+                    <div class="stat-footer">
+                        <div class="stat-trend positive">
+                            <span class="trend-arrow">↗</span>
+                            <span class="trend-text">+20 this month</span>
+                        </div>
                     </div>
                 </div>
             </div>
-            
+
             <div class="col-md-3 col-sm-6">
-                <div class="stat-card cyber-card text-center">
-                    <div class="stat-icon mb-3">👥</div>
-                    <div class="stat-value text-accent">{{ stats.total_users or '2.5K' }}</div>
-                    <div class="stat-label text-muted">DAILY USERS</div>
-                    <div class="stat-trend text-success">
-                        <small>↗ +15% from last week</small>
+                <div class="enhanced-stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon-enhanced">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                                <circle cx="9" cy="7" r="4" />
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                            </svg>
+                        </div>
+                        <div class="stat-indicator active"></div>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number">{{ stats.total_users or '6' }}</div>
+                        <div class="stat-title">Elite Coders</div>
+                        <div class="stat-description">Active warriors</div>
+                    </div>
+                    <div class="stat-footer">
+                        <div class="stat-trend positive">
+                            <span class="trend-arrow">↗</span>
+                            <span class="trend-text">+15% this week</span>
+                        </div>
                     </div>
                 </div>
             </div>
-            
+
             <div class="col-md-3 col-sm-6">
-                <div class="stat-card cyber-card text-center">
-                    <div class="stat-icon mb-3">🎯</div>
-                    <div class="stat-value text-accent">{{ stats.total_submissions or '892' }}</div>
-                    <div class="stat-label text-muted">SUBMISSIONS TODAY</div>
-                    <div class="stat-trend text-success">
-                        <small>↗ +8% from yesterday</small>
+                <div class="enhanced-stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon-enhanced">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                <polyline points="14,2 14,8 20,8" />
+                                <line x1="16" y1="13" x2="8" y2="13" />
+                                <line x1="16" y1="17" x2="8" y2="17" />
+                            </svg>
+                        </div>
+                        <div class="stat-indicator active"></div>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number">{{ stats.total_submissions or '24' }}</div>
+                        <div class="stat-title">Submissions</div>
+                        <div class="stat-description">Code battles today</div>
+                    </div>
+                    <div class="stat-footer">
+                        <div class="stat-trend positive">
+                            <span class="trend-arrow">↗</span>
+                            <span class="trend-text">+8% today</span>
+                        </div>
                     </div>
                 </div>
             </div>
-            
+
             <div class="col-md-3 col-sm-6">
-                <div class="stat-card cyber-card text-center">
-                    <div class="stat-icon mb-3">📈</div>
-                    <div class="stat-value text-accent">48.2%</div>
-                    <div class="stat-label text-muted">AVG. SUCCESS RATE</div>
-                    <div class="stat-trend text-warning">
-                        <small>↘ -2% from last month</small>
+                <div class="enhanced-stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon-enhanced">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <polyline points="22,12 18,12 15,21 9,3 6,12 2,12" />
+                            </svg>
+                        </div>
+                        <div class="stat-indicator warning"></div>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number">48.2%</div>
+                        <div class="stat-title">Success Rate</div>
+                        <div class="stat-description">Victory percentage</div>
+                    </div>
+                    <div class="stat-footer">
+                        <div class="stat-trend negative">
+                            <span class="trend-arrow">↘</span>
+                            <span class="trend-text">-2% this month</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -149,13 +213,13 @@
     <div class="container">
         <div class="row">
             <div class="col-12 text-center mb-5">
-                <h2 class="section-title">
+                <h2 class="section-title" style="text-align: center !important;">
                     Elite Developer <span class="text-accent">Arsenal</span>
                 </h2>
                 <p class="text-secondary">Professional-grade tools built for serious coders who demand excellence</p>
             </div>
         </div>
-        
+
         <div class="row g-4">
             <div class="col-lg-3 col-md-6">
                 <div class="feature-card cyber-card text-center h-100">
@@ -170,7 +234,7 @@
                     </p>
                 </div>
             </div>
-            
+
             <div class="col-lg-3 col-md-6">
                 <div class="feature-card cyber-card text-center h-100">
                     <div class="feature-icon mb-4">
@@ -184,7 +248,7 @@
                     </p>
                 </div>
             </div>
-            
+
             <div class="col-lg-3 col-md-6">
                 <div class="feature-card cyber-card text-center h-100">
                     <div class="feature-icon mb-4">
@@ -198,7 +262,7 @@
                     </p>
                 </div>
             </div>
-            
+
             <div class="col-lg-3 col-md-6">
                 <div class="feature-card cyber-card text-center h-100">
                     <div class="feature-icon mb-4">
@@ -220,416 +284,478 @@
 <section class="cta-section py-5">
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-lg-8 text-center">
-                <div class="cta-content cyber-card">
-                    <h2 class="cta-title mb-4">
-                        Initialize Your Elite Journey
-                    </h2>
-                    <p class="cta-description text-secondary mb-5">
-                        Join the ranks of elite developers mastering their craft through battle-tested challenges
-                    </p>
-                    
-                    <!-- Terminal command -->
-                    <div class="terminal-command mb-4">
-                        <div class="command-line">
-                            <span class="text-accent text-mono">&gt;</span>
-                            <span class="text-mono">Enter_Arena()</span>
-                            <span class="text-muted">→</span>
+            <div class="col-lg-10">
+                <div class="elite-journey-section">
+                    <!-- Header -->
+                    <div class="journey-header">
+                        <h2 class="journey-title">
+                            <span class="title-accent">Initialize</span> Your Elite Journey
+                        </h2>
+                        <p class="journey-subtitle">
+                            Join the ranks of elite developers mastering their craft through battle-tested challenges
+                        </p>
+                    </div>
+
+                    <!-- Terminal Interface -->
+                    <div class="terminal-interface">
+                        <div class="terminal-header">
+                            <div class="terminal-controls">
+                                <span class="control-dot red"></span>
+                                <span class="control-dot yellow"></span>
+                                <span class="control-dot green"></span>
+                            </div>
+                            <div class="terminal-title">CodeXam Terminal v2.1.0</div>
                         </div>
-                        <div class="command-comment text-muted text-mono">
-                            // Documentation
+
+                        <div class="terminal-body">
+                            <div class="terminal-line">
+                                <span class="prompt">elite@codexam:~$</span>
+                                <span class="command">./initialize_session.sh</span>
+                            </div>
+                            <div class="terminal-line output">
+                                <span class="output-text">Scanning for elite developers...</span>
+                            </div>
+                            <div class="terminal-line output">
+                                <span class="output-success">✓ System ready for combat</span>
+                            </div>
+                            <div class="terminal-line output">
+                                <span class="output-info">→ Enter_Arena() function loaded</span>
+                            </div>
+                            <div class="terminal-line current">
+                                <span class="prompt">elite@codexam:~$</span>
+                                <span class="command typing">Enter_Arena()</span>
+                                <span class="cursor">|</span>
+                            </div>
                         </div>
                     </div>
-                    
-                    <div class="cta-actions">
-                        <a href="{{ url_for('problems_list') }}" class="btn-cyber-primary me-3">
-                            <span>Access All Challenges</span>
-                            <span class="ms-2">→</span>
+
+                    <!-- Action Buttons -->
+                    <div class="journey-actions">
+                        <a href="{{ url_for('problems_list') }}" class="elite-btn primary">
+                            <div class="btn-content">
+                                <svg class="btn-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2">
+                                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                                </svg>
+                                <span class="btn-text">ACCESS ALL CHALLENGES</span>
+                                <svg class="btn-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2">
+                                    <line x1="5" y1="12" x2="19" y2="12" />
+                                    <polyline points="12 5 19 12 12 19" />
+                                </svg>
+                            </div>
                         </a>
+
+                        <button class="elite-btn secondary" onclick="SystemInfoModal.show()" <div class="btn-content">
+                            <svg class="btn-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10" />
+                                <line x1="12" y1="16" x2="12" y2="12" />
+                                <line x1="12" y1="8" x2="12.01" y2="8" />
+                            </svg>
+                            <span class="btn-text">SYSTEM INFO</span>
                     </div>
-                    
-                    <!-- System status -->
-                    <div class="system-status mt-4">
-                        <span class="text-accent text-mono">● System Status: ONLINE ●</span>
+                    </button>
+                </div>
+
+                <!-- Status Bar -->
+                <div class="status-bar">
+                    <div class="status-item">
+                        <div class="status-indicator online"></div>
+                        <span class="status-text">System Status: ONLINE</span>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-indicator active"></div>
+                        <span class="status-text">Combat Mode: ACTIVE</span>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-indicator ready"></div>
+                        <span class="status-text">Arena: READY</span>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
     </div>
 </section>
 {% endblock %}
 
 {% block extra_css %}
 <style>
-/* Hero Section Styles */
-.hero-section {
-    background: 
-        radial-gradient(circle at 20% 80%, rgba(0, 255, 136, 0.1) 0%, transparent 50%),
-        radial-gradient(circle at 80% 20%, rgba(0, 255, 136, 0.05) 0%, transparent 50%);
-    position: relative;
-    overflow: hidden;
-}
-
-.hero-section::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: 
-        linear-gradient(45deg, transparent 49%, rgba(0, 255, 136, 0.02) 50%, transparent 51%),
-        linear-gradient(-45deg, transparent 49%, rgba(0, 255, 136, 0.02) 50%, transparent 51%);
-    background-size: 60px 60px;
-    opacity: 0.3;
-    pointer-events: none;
-}
-
-.hero-title {
-    font-size: 4rem;
-    font-weight: 800;
-    font-family: var(--font-display);
-    line-height: 1.1;
-    margin-bottom: 2rem;
-}
-
-.hero-subtitle {
-    font-size: 1.25rem;
-    line-height: 1.6;
-    max-width: 500px;
-}
-
-.terminal-prompt {
-    font-family: var(--font-mono);
-    font-size: 0.875rem;
-    padding: 0.5rem 1rem;
-    background: rgba(0, 255, 136, 0.05);
-    border: 1px solid rgba(0, 255, 136, 0.2);
-    border-radius: 0.25rem;
-    display: inline-block;
-}
-
-.terminal-status {
-    font-family: var(--font-mono);
-    font-size: 0.875rem;
-}
-
-.status-line {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.hero-actions {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    flex-wrap: wrap;
-}
-
-/* Code Preview Styles */
-.code-preview {
-    background: var(--bg-accent);
-    border: 1px solid var(--border-primary);
-    border-radius: 0.75rem;
-    overflow: hidden;
-    font-family: var(--font-mono);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-}
-
-.code-header {
-    background: var(--bg-secondary);
-    border-bottom: 1px solid var(--border-primary);
-    padding: 0.75rem 1rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.tab {
-    background: rgba(0, 255, 136, 0.1);
-    color: var(--accent-primary);
-    padding: 0.25rem 0.75rem;
-    border-radius: 0.25rem;
-    font-size: 0.75rem;
-    border: 1px solid rgba(0, 255, 136, 0.3);
-}
-
-.code-status {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.status-dot {
-    width: 8px;
-    height: 8px;
-    background: var(--accent-primary);
-    border-radius: 50%;
-}
-
-.code-content {
-    padding: 1.5rem;
-    background: var(--bg-accent);
-}
-
-.code-content pre {
-    margin: 0;
-    background: none;
-    border: none;
-    padding: 0;
-    font-size: 0.875rem;
-    line-height: 1.6;
-}
-
-.code-footer {
-    background: var(--bg-secondary);
-    border-top: 1px solid var(--border-primary);
-    padding: 0.75rem 1rem;
-}
-
-.execution-result {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    font-size: 0.875rem;
-}
-
-.result-status {
-    padding: 0.25rem 0.75rem;
-    border-radius: 0.25rem;
-    font-weight: 600;
-}
-
-.result-time {
-    color: var(--text-secondary);
-}
-
-/* Stats Section */
-.stats-section {
-    background: var(--bg-secondary);
-    border-top: 1px solid var(--border-primary);
-    border-bottom: 1px solid var(--border-primary);
-}
-
-.stat-card {
-    padding: 2rem 1.5rem;
-    transition: var(--transition-normal);
-}
-
-.stat-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 24px rgba(0, 255, 136, 0.15);
-}
-
-.stat-icon {
-    font-size: 2.5rem;
-    opacity: 0.8;
-}
-
-.stat-value {
-    font-size: 2.5rem;
-    font-weight: 800;
-    font-family: var(--font-mono);
-    margin-bottom: 0.5rem;
-}
-
-.stat-label {
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    margin-bottom: 0.5rem;
-}
-
-.stat-trend {
-    font-size: 0.75rem;
-}
-
-/* Features Section */
-.feature-card {
-    padding: 2.5rem 2rem;
-    transition: var(--transition-normal);
-}
-
-.feature-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 24px rgba(0, 255, 136, 0.15);
-}
-
-.icon-wrapper {
-    width: 80px;
-    height: 80px;
-    background: rgba(0, 255, 136, 0.1);
-    border: 2px solid rgba(0, 255, 136, 0.3);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto;
-    font-size: 2rem;
-}
-
-.feature-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--text-primary);
-}
-
-.feature-description {
-    font-size: 0.95rem;
-    line-height: 1.6;
-}
-
-/* CTA Section */
-.cta-section {
-    background: 
-        radial-gradient(circle at 50% 50%, rgba(0, 255, 136, 0.05) 0%, transparent 70%);
-}
-
-.cta-content {
-    padding: 3rem 2rem;
-    text-align: center;
-}
-
-.cta-title {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: var(--text-primary);
-}
-
-.cta-description {
-    font-size: 1.125rem;
-    line-height: 1.6;
-    max-width: 600px;
-    margin: 0 auto 2rem auto;
-}
-
-.terminal-command {
-    background: var(--bg-accent);
-    border: 1px solid var(--border-primary);
-    border-radius: 0.5rem;
-    padding: 1.5rem;
-    font-family: var(--font-mono);
-    max-width: 400px;
-    margin: 0 auto;
-}
-
-.command-line {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 0.5rem;
-}
-
-.command-comment {
-    font-size: 0.875rem;
-    text-align: left;
-}
-
-.system-status {
-    font-size: 0.875rem;
-    padding: 0.5rem 1rem;
-    background: rgba(0, 255, 136, 0.05);
-    border: 1px solid rgba(0, 255, 136, 0.2);
-    border-radius: 0.25rem;
-    display: inline-block;
-}
-
-/* Section Titles */
-.section-title {
-    font-size: 2.5rem;
-    font-weight: 700;
-    font-family: var(--font-display);
-    margin-bottom: 1rem;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .hero-title {
-        font-size: 2.5rem;
+    /* Hero Section Styles */
+    .hero-section {
+        background:
+            radial-gradient(circle at 20% 80%, rgba(0, 255, 136, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 80% 20%, rgba(0, 255, 136, 0.05) 0%, transparent 50%);
+        position: relative;
+        overflow: hidden;
     }
-    
+
+    .hero-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background:
+            linear-gradient(45deg, transparent 49%, rgba(0, 255, 136, 0.02) 50%, transparent 51%),
+            linear-gradient(-45deg, transparent 49%, rgba(0, 255, 136, 0.02) 50%, transparent 51%);
+        background-size: 60px 60px;
+        opacity: 0.3;
+        pointer-events: none;
+    }
+
+    .hero-title {
+        font-size: 4rem;
+        font-weight: 800;
+        font-family: var(--font-display);
+        line-height: 1.1;
+        margin-bottom: 2rem;
+    }
+
     .hero-subtitle {
-        font-size: 1rem;
+        font-size: 1.25rem;
+        line-height: 1.6;
+        max-width: 500px;
     }
-    
-    .hero-actions {
-        justify-content: center;
-    }
-    
-    .code-preview {
-        margin-top: 2rem;
-    }
-    
-    .stat-value {
-        font-size: 2rem;
-    }
-    
-    .section-title {
-        font-size: 2rem;
-    }
-    
-    .cta-title {
-        font-size: 2rem;
-    }
-}
 
-@media (max-width: 480px) {
-    .hero-title {
+    .terminal-prompt {
+        font-family: var(--font-mono);
+        font-size: 0.875rem;
+        padding: 0.5rem 1rem;
+        background: rgba(0, 255, 136, 0.05);
+        border: 1px solid rgba(0, 255, 136, 0.2);
+        border-radius: 0.25rem;
+        display: inline-block;
+    }
+
+    .terminal-status {
+        font-family: var(--font-mono);
+        font-size: 0.875rem;
+    }
+
+    .status-line {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        justify-content: flex-start;
+        text-align: left;
+    }
+
+    .hero-actions {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    /* Code Preview Styles */
+    .code-preview {
+        background: var(--bg-accent);
+        border: 1px solid var(--border-primary);
+        border-radius: 0.75rem;
+        overflow: hidden;
+        font-family: var(--font-mono);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .code-header {
+        background: var(--bg-secondary);
+        border-bottom: 1px solid var(--border-primary);
+        padding: 0.75rem 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .tab {
+        background: rgba(0, 255, 136, 0.1);
+        color: var(--accent-primary);
+        padding: 0.25rem 0.75rem;
+        border-radius: 0.25rem;
+        font-size: 0.75rem;
+        border: 1px solid rgba(0, 255, 136, 0.3);
+    }
+
+    .code-status {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .status-dot {
+        width: 8px;
+        height: 8px;
+        background: var(--accent-primary);
+        border-radius: 50%;
+    }
+
+    .code-content {
+        padding: 1.5rem;
+        background: var(--bg-accent);
+    }
+
+    .code-content pre {
+        margin: 0;
+        background: none;
+        border: none;
+        padding: 0;
+        font-size: 0.875rem;
+        line-height: 1.6;
+    }
+
+    .code-footer {
+        background: var(--bg-secondary);
+        border-top: 1px solid var(--border-primary);
+        padding: 0.75rem 1rem;
+    }
+
+    .execution-result {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        font-size: 0.875rem;
+    }
+
+    .result-status {
+        padding: 0.25rem 0.75rem;
+        border-radius: 0.25rem;
+        font-weight: 600;
+    }
+
+    .result-time {
+        color: var(--text-secondary);
+    }
+
+    /* Stats Section */
+    .stats-section {
+        background: var(--bg-secondary);
+        border-top: 1px solid var(--border-primary);
+        border-bottom: 1px solid var(--border-primary);
+    }
+
+    .stat-card {
+        padding: 2rem 1.5rem;
+        transition: var(--transition-normal);
+    }
+
+    .stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 24px rgba(0, 255, 136, 0.15);
+    }
+
+    .stat-icon {
+        font-size: 2.5rem;
+        opacity: 0.8;
+    }
+
+    .stat-value {
+        font-size: 2.5rem;
+        font-weight: 800;
+        font-family: var(--font-mono);
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-trend {
+        font-size: 0.75rem;
+    }
+
+    /* Features Section */
+    .feature-card {
+        padding: 2.5rem 2rem;
+        transition: var(--transition-normal);
+    }
+
+    .feature-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 24px rgba(0, 255, 136, 0.15);
+    }
+
+    .icon-wrapper {
+        width: 80px;
+        height: 80px;
+        background: rgba(0, 255, 136, 0.1);
+        border: 2px solid rgba(0, 255, 136, 0.3);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
         font-size: 2rem;
     }
-    
-    .feature-card,
-    .stat-card {
-        padding: 1.5rem 1rem;
+
+    .feature-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--text-primary);
     }
-    
+
+    .feature-description {
+        font-size: 0.95rem;
+        line-height: 1.6;
+    }
+
+    /* CTA Section */
+    .cta-section {
+        background:
+            radial-gradient(circle at 50% 50%, rgba(0, 255, 136, 0.05) 0%, transparent 70%);
+    }
+
     .cta-content {
-        padding: 2rem 1rem;
+        padding: 3rem 2rem;
+        text-align: center;
     }
-}
+
+    .cta-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--text-primary);
+    }
+
+    .cta-description {
+        font-size: 1.125rem;
+        line-height: 1.6;
+        max-width: 600px;
+        margin: 0 auto 2rem auto;
+    }
+
+    .terminal-command {
+        background: var(--bg-accent);
+        border: 1px solid var(--border-primary);
+        border-radius: 0.5rem;
+        padding: 1.5rem;
+        font-family: var(--font-mono);
+        max-width: 400px;
+        margin: 0 auto;
+    }
+
+    .command-line {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .command-comment {
+        font-size: 0.875rem;
+        text-align: left;
+    }
+
+    .system-status {
+        font-size: 0.875rem;
+        padding: 0.5rem 1rem;
+        background: rgba(0, 255, 136, 0.05);
+        border: 1px solid rgba(0, 255, 136, 0.2);
+        border-radius: 0.25rem;
+        display: inline-block;
+    }
+
+    /* Section Titles */
+    .section-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        font-family: var(--font-display);
+        margin-bottom: 1rem;
+        text-align: center !important;
+        width: 100%;
+        display:block;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .hero-title {
+            font-size: 2.5rem;
+        }
+
+        .hero-subtitle {
+            font-size: 1rem;
+        }
+
+        .hero-actions {
+            justify-content: center;
+        }
+
+        .code-preview {
+            margin-top: 2rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+        }
+
+        .section-title {
+            font-size: 2rem;
+        }
+
+        .cta-title {
+            font-size: 2rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .hero-title {
+            font-size: 2rem;
+        }
+
+        .feature-card,
+        .stat-card {
+            padding: 1.5rem 1rem;
+        }
+
+        .cta-content {
+            padding: 2rem 1rem;
+        }
+    }
 </style>
 {% endblock %}
 
 {% block extra_js %}
 <script>
-function showPreview() {
-    // Simple demo function - could expand to show interactive demo
-    alert('🚀 Demo: This would show an interactive coding challenge preview!');
-}
-
-// Add some dynamic effects
-document.addEventListener('DOMContentLoaded', function() {
-    // Animate stats on scroll
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    };
-    
-    const observer = new IntersectionObserver(function(entries) {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('animate-slide-up');
-            }
-        });
-    }, observerOptions);
-    
-    // Observe stat cards and feature cards
-    document.querySelectorAll('.stat-card, .feature-card').forEach(card => {
-        observer.observe(card);
-    });
-    
-    // Add typing effect to terminal prompt
-    const terminalPrompt = document.querySelector('.terminal-prompt');
-    if (terminalPrompt) {
-        const cursor = terminalPrompt.querySelector('.animate-pulse');
-        if (cursor) {
-            setInterval(() => {
-                cursor.style.opacity = cursor.style.opacity === '0' ? '1' : '0';
-            }, 800);
-        }
+    function showPreview() {
+        // Simple demo function - could expand to show interactive demo
+        alert('🚀 Demo: This would show an interactive coding challenge preview!');
     }
-});
+
+    // Add some dynamic effects
+    document.addEventListener('DOMContentLoaded', function () {
+        // Animate stats on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function (entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-slide-up');
+                }
+            });
+        }, observerOptions);
+
+        // Observe stat cards and feature cards
+        document.querySelectorAll('.stat-card, .feature-card').forEach(card => {
+            observer.observe(card);
+        });
+
+        // Add typing effect to terminal prompt
+        const terminalPrompt = document.querySelector('.terminal-prompt');
+        if (terminalPrompt) {
+            const cursor = terminalPrompt.querySelector('.animate-pulse');
+            if (cursor) {
+                setInterval(() => {
+                    cursor.style.opacity = cursor.style.opacity === '0' ? '1' : '0';
+                }, 800);
+            }
+        }
+    });
 </script>
 {% endblock %}

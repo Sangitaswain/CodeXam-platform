@@ -33,6 +33,8 @@
     
     <!-- Custom CSS -->
     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/clean-nav.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/system-info-modal.css') }}" rel="stylesheet">
     
     {% block extra_css %}{% endblock %}
 </head>
@@ -97,24 +99,108 @@
                 {% endif %}
             </div>
             
-            <!-- User Section (Hacker Style) -->
+            <!-- User Section (Enhanced Hacker Style) -->
             <div class="navbar-user">
-                <div class="user-info">
-                    <span class="user-status animate-pulse">●</span>
-                    <span class="user-name">{{ session.user_name or 'Anonymous' }}</span>
-                </div>
-                
-                {% if session.user_name and session.user_name != 'Anonymous' %}
-                    <button class="btn-cyber btn-sm" 
-                            data-bs-toggle="modal" 
-                            data-bs-target="#changeNameModal">
-                        <span>Change Name</span>
-                    </button>
+                {% if session.user_name %}
+                    <!-- Hacker-Style User Profile (Named or Anonymous) -->
+                    <div class="user-profile-dropdown">
+                        <button class="user-profile-btn" 
+                                type="button" 
+                                data-bs-toggle="dropdown" 
+                                aria-expanded="false"
+                                aria-label="User menu">
+                            <div class="user-avatar-hacker">
+                                {{ session.user_name[0].upper() }}
+                            </div>
+                            <div class="user-info-hacker">
+                                <span class="user-name-hacker">{{ session.user_name }}</span>
+                                <span class="user-status-hacker">
+                                    <span class="status-dot-hacker animate-pulse"></span>
+                                    <span class="status-text">ONLINE</span>
+                                </span>
+                            </div>
+                            <svg class="dropdown-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </button>
+                        
+                        <ul class="dropdown-menu user-menu-hacker">
+                            <li class="menu-header">
+                                <div class="user-profile-header">
+                                    <div class="user-avatar-large-hacker">
+                                        {{ session.user_name[0].upper() }}
+                                    </div>
+                                    <div class="user-details-hacker">
+                                        <div class="user-name-large-hacker">{{ session.user_name }}</div>
+                                        <div class="user-role-hacker">
+                                            {% if session.user_name == 'Anonymous' %}
+                                                GHOST_MODE
+                                            {% else %}
+                                                ELITE_CODER
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li><hr class="menu-divider"></li>
+                            {% if session.user_name != 'Anonymous' %}
+                            <li>
+                                <a class="menu-item" href="{{ url_for('submissions_history') }}">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                        <polyline points="14,2 14,8 20,8"/>
+                                        <line x1="16" y1="13" x2="8" y2="13"/>
+                                        <line x1="16" y1="17" x2="8" y2="17"/>
+                                    </svg>
+                                    <span>My_Submissions()</span>
+                                </a>
+                            </li>
+                            {% endif %}
+                            <li>
+                                <button class="menu-item" 
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#changeNameModal">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                        <circle cx="12" cy="7" r="4"/>
+                                    </svg>
+                                    <span>{% if session.user_name == 'Anonymous' %}Set_Identity(){% else %}Change_Identity(){% endif %}</span>
+                                </button>
+                            </li>
+                            <li>
+                                <button class="menu-item" onclick="CodeXamUI.showKeyboardShortcuts()">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                                        <line x1="8" y1="21" x2="16" y2="21"/>
+                                        <line x1="12" y1="17" x2="12" y2="21"/>
+                                    </svg>
+                                    <span>Shortcuts_Help()</span>
+                                </button>
+                            </li>
+                            <li><hr class="menu-divider"></li>
+                            <li>
+                                <a class="menu-item" href="{{ url_for('logout') }}">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                                        <polyline points="16 17 21 12 16 7"/>
+                                        <line x1="21" y1="12" x2="9" y2="12"/>
+                                    </svg>
+                                    <span>Terminate_Session()</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 {% else %}
-                    <button class="btn-cyber btn-sm" 
+                    <!-- Anonymous User - Hacker Style -->
+                    <button class="btn-hacker-enter" 
                             data-bs-toggle="modal" 
                             data-bs-target="#setNameModal">
-                        <span>Login</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+                            <polyline points="10 17 15 12 10 7"/>
+                            <line x1="15" y1="12" x2="3" y2="12"/>
+                        </svg>
+                        <span>AUTHENTICATE_USER()</span>
                     </button>
                 {% endif %}
             </div>
@@ -148,31 +234,32 @@
     {% endwith %}
 
     <!-- Main Content -->
-    <main class="main-content" role="main">
+    <main id="main-content" class="main-content" role="main">
         {% block content %}{% endblock %}
     </main>
 
-    <!-- Footer -->
-    <footer class="cyber-footer mt-5" role="contentinfo">
+    <!-- Simple Footer -->
+    <footer class="simple-footer" role="contentinfo">
         <div class="container">
             <div class="footer-content">
-                <div class="footer-brand">
-                    <span class="brand-icon">&lt;/&gt;</span>
-                    <span class="brand-text">CodeXam</span>
+                <div class="footer-left">
+                    <span class="footer-brand">
+                        <span class="brand-icon">&lt;/&gt;</span>
+                        <span class="brand-text">CodeXam</span>
+                    </span>
+                    <span class="footer-tagline">Elite Coding Arena</span>
                 </div>
                 
-                <div class="footer-links">
-                    <a href="{{ url_for('index') }}">Home</a>
-                    <a href="{{ url_for('problems_list') }}">Problems</a>
-                    <a href="{{ url_for('leaderboard') }}">Leaderboard</a>
-                </div>
-                
-                <div class="footer-info">
-                    <p class="mb-0">&copy; 2024 CodeXam - Elite Coding Arena</p>
-                    <p class="mb-0 text-muted">
-                        <span class="text-mono">System Status:</span> 
-                        <span class="text-accent animate-pulse">ONLINE</span>
-                    </p>
+                <div class="footer-right">
+                    <div class="footer-status">
+                        <button class="system-info-btn" onclick="SystemInfoModal.show()" aria-label="Open System Information">
+                            <div class="status-dot"></div>
+                            <span class="status-text">System Online</span>
+                        </button>
+                    </div>
+                    <div class="footer-copyright">
+                        © 2024 CodeXam
+                    </div>
                 </div>
             </div>
         </div>
@@ -216,9 +303,9 @@
                     </form>
                 </div>
                 <div class="modal-footer border-top border-secondary">
-                    <button type="button" class="btn-cyber-secondary" data-bs-dismiss="modal">
+                    <a href="{{ url_for('stay_anonymous') }}" class="btn-cyber-secondary">
                         Skip (Stay Anonymous)
-                    </button>
+                    </a>
                     <button type="submit" form="setNameForm" class="btn-cyber-primary">
                         <span>Enter_Arena()</span>
                         <span class="ms-2">→</span>
@@ -265,10 +352,116 @@
         </div>
     </div>
 
+    <!-- System Info Modal -->
+    <div id="systemInfoModal" class="system-info-modal" style="display: none;" role="dialog" aria-labelledby="systemInfoTitle" aria-modal="true">
+        <div class="terminal-container">
+            <!-- Close Button -->
+            <button class="terminal-close-btn" onclick="SystemInfoModal.hide()" aria-label="Close System Info">
+                <span>×</span>
+            </button>
+            
+            <!-- Matrix Background Effect -->
+            <div class="matrix-background" id="matrixBackground"></div>
+            
+            <!-- Terminal Content -->
+            <div class="terminal-content">
+                <!-- ASCII Art Header -->
+                <div class="terminal-header" id="terminalHeader">
+                    <pre class="ascii-art" id="asciiArt"></pre>
+                </div>
+                
+                <!-- Boot Sequence -->
+                <div class="boot-sequence" id="bootSequence">
+                    <div class="boot-line">Initializing CodeXam System Diagnostics...</div>
+                </div>
+                
+                <!-- Main Terminal Interface -->
+                <div class="terminal-interface" id="terminalInterface" style="display: none;">
+                    <!-- System Status Panel -->
+                    <div class="terminal-panel">
+                        <div class="panel-header">
+                            <span class="panel-title">[SYSTEM STATUS]</span>
+                            <span class="panel-status" id="systemStatus">OPERATIONAL</span>
+                        </div>
+                        <div class="panel-content" id="systemStatusContent">
+                            <div class="status-loading">Loading system diagnostics...</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Statistics Panel -->
+                    <div class="terminal-panel">
+                        <div class="panel-header">
+                            <span class="panel-title">[PLATFORM STATISTICS]</span>
+                            <span class="panel-refresh" id="statsRefresh">●</span>
+                        </div>
+                        <div class="panel-content" id="statisticsContent">
+                            <div class="status-loading">Fetching platform data...</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Performance Monitor -->
+                    <div class="terminal-panel">
+                        <div class="panel-header">
+                            <span class="panel-title">[PERFORMANCE MONITOR]</span>
+                            <span class="panel-indicator" id="performanceIndicator">●</span>
+                        </div>
+                        <div class="panel-content" id="performanceContent">
+                            <div class="status-loading">Analyzing performance metrics...</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Interactive Command Terminal -->
+                    <div class="terminal-panel command-panel">
+                        <div class="panel-header">
+                            <span class="panel-title">[INTERACTIVE TERMINAL]</span>
+                            <span class="panel-help">Type 'help' for commands</span>
+                        </div>
+                        <div class="panel-content">
+                            <div class="command-output" id="commandOutput">
+                                <div class="command-line">
+                                    <span class="prompt">codexam@system:~$</span>
+                                    <span class="command-text">Welcome to CodeXam System Terminal</span>
+                                </div>
+                                <div class="command-line">
+                                    <span class="prompt">codexam@system:~$</span>
+                                    <span class="command-text">Type 'help' to see available commands</span>
+                                </div>
+                            </div>
+                            <div class="command-input-container">
+                                <span class="prompt">codexam@system:~$</span>
+                                <input type="text" class="command-input" id="commandInput" placeholder="Enter command..." autocomplete="off">
+                                <span class="cursor-blink">|</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
     <!-- Custom JavaScript -->
+    <script src="{{ url_for('static', filename='js/system-info-modal.js') }}"></script>
+    <script>
+        // Debug helper for System Info Modal
+        function debugSystemInfoModal() {
+            console.log('🔧 Debug System Info Modal');
+            console.log('SystemInfoModal exists:', typeof SystemInfoModal !== 'undefined');
+            console.log('Modal element exists:', !!document.getElementById('systemInfoModal'));
+            
+            if (typeof SystemInfoModal !== 'undefined') {
+                console.log('Modal state:', {
+                    isOpen: SystemInfoModal.isOpen,
+                    isAnimating: SystemInfoModal.isAnimating
+                });
+            }
+        }
+        
+        // Add to global scope for console debugging
+        window.debugSystemInfoModal = debugSystemInfoModal;
+    </script>
     <script>
         // Cyber theme enhancements
         document.addEventListener('DOMContentLoaded', function() {

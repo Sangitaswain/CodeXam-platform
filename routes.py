@@ -157,13 +157,14 @@ def register_routes(app):
         """Leaderboard route showing user rankings by problems solved."""
         try:
             leaderboard_data = Submission.get_leaderboard(limit=50)
+            current_user = session.get('user_name', 'Anonymous')
             
             logger.info("Leaderboard accessed")
-            return render_template('leaderboard.html', leaderboard=leaderboard_data)
+            return render_template('leaderboard.html', leaderboard=leaderboard_data, current_user=current_user)
         except Exception as e:
             logger.error(f"Error loading leaderboard: {e}")
             flash('Error loading leaderboard. Please try again.', 'error')
-            return render_template('leaderboard.html', leaderboard=[])
+            return render_template('leaderboard.html', leaderboard=[], current_user=session.get('user_name', 'Anonymous'))
     
     @app.route('/set_name', methods=['GET', 'POST'])
     def set_name():
@@ -184,6 +185,23 @@ def register_routes(app):
         # Show name setting form
         next_page = request.args.get('next', url_for('problems_list'))
         return render_template('set_name.html', next_page=next_page)
+    
+    @app.route('/logout')
+    def logout():
+        """Logout route to clear user session."""
+        user_name = session.get('user_name', 'Anonymous')
+        session.pop('user_name', None)
+        flash(f'Goodbye, {user_name}! Session terminated.', 'info')
+        logger.info(f"User logged out: {user_name}")
+        return redirect(url_for('index'))
+    
+    @app.route('/stay_anonymous')
+    def stay_anonymous():
+        """Route to handle staying anonymous - sets user as Anonymous."""
+        session['user_name'] = 'Anonymous'  # Set as Anonymous user
+        flash('Continuing as Anonymous user.', 'info')
+        logger.info("User chose to stay anonymous")
+        return redirect(url_for('problems_list'))
     
     @app.route('/admin')
     def admin_panel():

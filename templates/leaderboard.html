@@ -1,176 +1,233 @@
 {% extends "base.html" %}
 
-{% block title %}Leaderboard - CodeXam{% endblock %}
+{% block title %}Elite Rankings - CodeXam{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-12">
-        <div class="text-center mb-4">
-            <h2><i class="fas fa-trophy text-warning"></i> Leaderboard</h2>
-            <p class="text-muted">Top performers ranked by problems solved</p>
+<div class="leaderboard-container">
+    <!-- Header Section -->
+    <div class="leaderboard-header">
+        <div class="header-content">
+            <div class="header-icon">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
+                    <path d="M14 9h1.5a2.5 2.5 0 0 0 0-5H14"/>
+                    <path d="M6 9v6"/>
+                    <path d="M14 9v6"/>
+                    <path d="M6 15h8"/>
+                    <path d="M21 12.5A2.5 2.5 0 0 1 18.5 15H17"/>
+                    <path d="M3 12.5A2.5 2.5 0 0 0 5.5 15H7"/>
+                </svg>
+            </div>
+            <h1 class="header-title">Elite Rankings</h1>
+            <p class="header-subtitle">Top performers in the coding arena</p>
+        </div>
+    </div>
+
+    {% if leaderboard %}
+        <!-- Podium Section for Top 3 -->
+        {% if leaderboard|length >= 1 %}
+        <div class="podium-section">
+            <div class="podium-container">
+                <!-- Second Place (Left) -->
+                {% if leaderboard|length >= 2 %}
+                <div class="podium-position podium-second">
+                    <div class="podium-user">
+                        <div class="user-avatar user-avatar-second">
+                            {{ leaderboard[1].user_name[0].upper() }}
+                        </div>
+                        <div class="user-info">
+                            <h3 class="user-name">{{ leaderboard[1].user_name }}</h3>
+                            <div class="user-badge badge-second">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                    <circle cx="12" cy="8" r="6"/>
+                                    <path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/>
+                                </svg>
+                                Runner-up
+                            </div>
+                            <div class="user-stats">
+                                <span class="problems-count">{{ leaderboard[1].problems_solved }}</span>
+                                <span class="problems-label">problems</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="podium-base podium-base-second">
+                        <div class="podium-rank">#2</div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- First Place (Center) -->
+                <div class="podium-position podium-first">
+                    <div class="podium-user">
+                        <div class="user-avatar user-avatar-first">
+                            {{ leaderboard[0].user_name[0].upper() }}
+                        </div>
+                        <div class="user-info">
+                            <h3 class="user-name">{{ leaderboard[0].user_name }}</h3>
+                            <div class="user-badge badge-first">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                </svg>
+                                Champion
+                            </div>
+                            <div class="user-stats">
+                                <span class="problems-count">{{ leaderboard[0].problems_solved }}</span>
+                                <span class="problems-label">problems</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="podium-base podium-base-first">
+                        <div class="podium-rank">#1</div>
+                    </div>
+                </div>
+
+                <!-- Third Place (Right) -->
+                {% if leaderboard|length >= 3 %}
+                <div class="podium-position podium-third">
+                    <div class="podium-user">
+                        <div class="user-avatar user-avatar-third">
+                            {{ leaderboard[2].user_name[0].upper() }}
+                        </div>
+                        <div class="user-info">
+                            <h3 class="user-name">{{ leaderboard[2].user_name }}</h3>
+                            <div class="user-badge badge-third">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                    <circle cx="12" cy="8" r="6"/>
+                                    <path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/>
+                                </svg>
+                                3rd Place
+                            </div>
+                            <div class="user-stats">
+                                <span class="problems-count">{{ leaderboard[2].problems_solved }}</span>
+                                <span class="problems-label">problems</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="podium-base podium-base-third">
+                        <div class="podium-rank">#3</div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Remaining Rankings -->
+        {% if leaderboard|length > 3 %}
+        <div class="rankings-section">
+            <div class="rankings-header">
+                <h2>All Rankings</h2>
+            </div>
+            <div class="rankings-list">
+                {% for entry in leaderboard[3:] %}
+                <div class="ranking-item {% if entry.user_name == current_user %}ranking-item-current{% endif %}">
+                    <div class="ranking-position">
+                        <span class="position-number">#{{ loop.index + 3 }}</span>
+                    </div>
+                    <div class="ranking-user">
+                        <div class="user-avatar">
+                            {{ entry.user_name[0].upper() }}
+                        </div>
+                        <div class="user-details">
+                            <h4 class="user-name">{{ entry.user_name }}</h4>
+                            {% if entry.user_name == current_user %}
+                                <span class="current-user-badge">You</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="ranking-stats">
+                        <div class="stat-item">
+                            <span class="stat-value">{{ entry.problems_solved }}</span>
+                            <span class="stat-label">Solved</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value">{{ entry.total_submissions }}</span>
+                            <span class="stat-label">Attempts</span>
+                        </div>
+                        <div class="stat-item">
+                            {% set success_rate = (entry.problems_solved / entry.total_submissions * 100) if entry.total_submissions > 0 else 0 %}
+                            <span class="stat-value">{{ "%.0f"|format(success_rate) }}%</span>
+                            <span class="stat-label">Success</span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Statistics Section -->
+        <div class="stats-section">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                            <circle cx="9" cy="7" r="4"/>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number">{{ leaderboard|length }}</div>
+                        <div class="stat-title">Active Coders</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="16 18 22 12 16 6"/>
+                            <polyline points="8 6 2 12 8 18"/>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number">{{ leaderboard|sum(attribute='problems_solved') }}</div>
+                        <div class="stat-title">Problems Solved</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14,2 14,8 20,8"/>
+                            <line x1="16" y1="13" x2="8" y2="13"/>
+                            <line x1="16" y1="17" x2="8" y2="17"/>
+                            <polyline points="10,9 9,9 8,9"/>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number">{{ leaderboard|sum(attribute='total_submissions') }}</div>
+                        <div class="stat-title">Total Submissions</div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        {% if leaderboard %}
-            <div class="card">
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0">
-                            <thead class="table-light">
-                                <tr>
-                                    <th width="80">Rank</th>
-                                    <th>User</th>
-                                    <th width="150">Problems Solved</th>
-                                    <th width="150">Total Submissions</th>
-                                    <th width="120">Success Rate</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for entry in leaderboard %}
-                                <tr {% if loop.index <= 3 %}class="table-warning"{% endif %}>
-                                    <td class="text-center">
-                                        {% if loop.index == 1 %}
-                                            <i class="fas fa-crown text-warning fs-4"></i>
-                                        {% elif loop.index == 2 %}
-                                            <i class="fas fa-medal text-secondary fs-5"></i>
-                                        {% elif loop.index == 3 %}
-                                            <i class="fas fa-medal text-warning fs-5"></i>
-                                        {% else %}
-                                            <span class="fs-5 fw-bold">#{{ loop.index }}</span>
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <div class="avatar-circle me-3">
-                                                {{ entry.user_name[0].upper() }}
-                                            </div>
-                                            <div>
-                                                <strong>{{ entry.user_name }}</strong>
-                                                {% if loop.index <= 3 %}
-                                                    <span class="badge bg-primary ms-2">
-                                                        {% if loop.index == 1 %}Champion
-                                                        {% elif loop.index == 2 %}Runner-up
-                                                        {% else %}3rd Place{% endif %}
-                                                    </span>
-                                                {% endif %}
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="text-center">
-                                        <span class="badge bg-success fs-6 px-3 py-2">
-                                            {{ entry.problems_solved }}
-                                        </span>
-                                    </td>
-                                    <td class="text-center">
-                                        <span class="text-muted">{{ entry.total_submissions }}</span>
-                                    </td>
-                                    <td class="text-center">
-                                        {% set success_rate = (entry.problems_solved / entry.total_submissions * 100) if entry.total_submissions > 0 else 0 %}
-                                        <div class="progress" style="height: 20px;">
-                                            <div class="progress-bar 
-                                                {% if success_rate >= 80 %}bg-success
-                                                {% elif success_rate >= 60 %}bg-warning
-                                                {% else %}bg-danger{% endif %}" 
-                                                role="progressbar" 
-                                                style="width: {{ success_rate }}%"
-                                                aria-valuenow="{{ success_rate }}" 
-                                                aria-valuemin="0" 
-                                                aria-valuemax="100">
-                                                {{ "%.0f"|format(success_rate) }}%
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+    {% else %}
+        <!-- Empty State -->
+        <div class="empty-state">
+            <div class="empty-icon">
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
+                    <path d="M14 9h1.5a2.5 2.5 0 0 0 0-5H14"/>
+                    <path d="M6 9v6"/>
+                    <path d="M14 9v6"/>
+                    <path d="M6 15h8"/>
+                    <path d="M21 12.5A2.5 2.5 0 0 1 18.5 15H17"/>
+                    <path d="M3 12.5A2.5 2.5 0 0 0 5.5 15H7"/>
+                </svg>
             </div>
-
-            <!-- Leaderboard Statistics -->
-            <div class="row mt-4">
-                <div class="col-md-4">
-                    <div class="card text-center">
-                        <div class="card-body">
-                            <i class="fas fa-users fa-2x text-primary mb-2"></i>
-                            <h5 class="card-title">{{ leaderboard|length }}</h5>
-                            <p class="card-text">Active Users</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card text-center">
-                        <div class="card-body">
-                            <i class="fas fa-code fa-2x text-success mb-2"></i>
-                            <h5 class="card-title">{{ leaderboard|sum(attribute='problems_solved') }}</h5>
-                            <p class="card-text">Total Problems Solved</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card text-center">
-                        <div class="card-body">
-                            <i class="fas fa-paper-plane fa-2x text-info mb-2"></i>
-                            <h5 class="card-title">{{ leaderboard|sum(attribute='total_submissions') }}</h5>
-                            <p class="card-text">Total Submissions</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        {% else %}
-            <div class="text-center py-5">
-                <i class="fas fa-trophy fa-4x text-muted mb-3"></i>
-                <h4 class="text-muted">No rankings yet</h4>
-                <p class="text-muted">The leaderboard will show rankings once users start solving problems.</p>
-                <a href="{{ url_for('problems_list') }}" class="btn btn-primary">
-                    <i class="fas fa-code"></i> Start Solving Problems
-                </a>
-            </div>
-        {% endif %}
-    </div>
+            <h3 class="empty-title">No rankings yet</h3>
+            <p class="empty-description">The leaderboard will show rankings once coders start solving problems.</p>
+            <a href="{{ url_for('problems_list') }}" class="cta-button">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="16 18 22 12 16 6"/>
+                    <polyline points="8 6 2 12 8 18"/>
+                </svg>
+                Start Coding
+            </a>
+        </div>
+    {% endif %}
 </div>
 {% endblock %}
 
-{% block extra_css %}
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-<style>
-.avatar-circle {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-weight: bold;
-    font-size: 16px;
-}
-
-.table-warning {
-    background-color: rgba(255, 193, 7, 0.1) !important;
-}
-
-.progress {
-    border-radius: 10px;
-}
-
-.card {
-    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-    transition: transform 0.2s ease-in-out;
-}
-
-.card:hover {
-    transform: translateY(-2px);
-}
-
-.fa-crown {
-    color: #ffd700 !important;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-}
-
-.fa-medal {
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
-}
-</style>
-{% endblock %}

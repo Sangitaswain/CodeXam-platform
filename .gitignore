@@ -152,6 +152,22 @@ public
 tmp/
 temp/
 
+# Debug and report files (should not be committed)
+BUG_CHECK_FINAL_REPORT.md
+BUG_CHECK_REPORT.md
+CURRENT_STATUS.md
+DATABASE_CONTROL_OPTIONS.md
+DATABASE_MANAGEMENT_GUIDE.md
+DATABASE_OPTIONS.md
+FIXES_AND_IMPROVEMENTS.md
+JAVASCRIPT_FIXES.md
+MCP-WORKING-GUIDE.md
+debug_modal.html
+
+# Test files that shouldn't be in production
+test_*.py
+!tests/test_*.py  # Keep proper test files in tests/ directory
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

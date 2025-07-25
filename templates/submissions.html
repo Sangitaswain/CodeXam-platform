@@ -1,179 +1,1476 @@
 {% extends "base.html" %}
 
-{% block title %}Submission History - CodeXam{% endblock %}
+{% block title %}Submission History - Elite Archive - CodeXam{% endblock %}
+
+{% block body_class %}submissions-page{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-12">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2>Your Submission History</h2>
-            <span class="text-muted">User: {{ user_name }}</span>
+<!-- Submissions Header -->
+<section class="submissions-header py-5">
+    <div class="container">
+        <div class="header-content">
+            <div class="header-title-section">
+                <h1 class="section-title mb-3">
+                    Submission <span class="text-accent">Archive</span>
+                </h1>
+                <p class="section-subtitle text-secondary mb-4">
+                    Track your coding journey and analyze your performance patterns.
+                </p>
+            </div>
+
+            <div class="header-stats">
+                <div class="user-info">
+                    <span class="user-label">Elite Developer:</span>
+                    <span class="user-name">{{ user_name }}</span>
+                    <span class="user-status animate-pulse">●</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Filters and Controls -->
+<section class="submissions-controls py-4">
+    <div class="container">
+        <div class="controls-wrapper">
+            <div class="filter-section">
+                <div class="filter-group">
+                    <label class="filter-label">Problem:</label>
+                    <select id="problemFilter" class="filter-select">
+                        <option value="">All Problems</option>
+                        {% for problem_id in submissions|map(attribute='problem_id')|unique %}
+                        <option value="{{ problem_id }}">Problem #{{ problem_id }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label class="filter-label">Status:</label>
+                    <select id="statusFilter" class="filter-select">
+                        <option value="">All Results</option>
+                        <option value="PASS">✅ Passed</option>
+                        <option value="FAIL">❌ Failed</option>
+                        <option value="ERROR">⚠️ Error</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label class="filter-label">Language:</label>
+                    <select id="languageFilter" class="filter-select">
+                        <option value="">All Languages</option>
+                        {% for language in submissions|map(attribute='language')|unique %}
+                        <option value="{{ language }}">{{ language.title() }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="view-controls">
+                <button class="btn-view-toggle active" data-view="table" title="Table View">
+                    <span class="view-icon">📊</span>
+                </button>
+                <button class="btn-view-toggle" data-view="cards" title="Card View">
+                    <span class="view-icon">🗃️</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Submissions Content -->
+<section class="submissions-content py-4">
+    <div class="container">
+        {% if submissions %}
+        <!-- Statistics Overview -->
+        <div class="stats-overview mb-5">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">📈</div>
+                    <div class="stat-content">
+                        <div class="stat-value">{{ submissions|length }}</div>
+                        <div class="stat-label">Total Attempts</div>
+                    </div>
+                </div>
+
+                <div class="stat-card success">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-content">
+                        <div class="stat-value">{{ submissions|selectattr("result", "equalto", "PASS")|list|length }}
+                        </div>
+                        <div class="stat-label">Successful</div>
+                    </div>
+                </div>
+
+                <div class="stat-card warning">
+                    <div class="stat-icon">❌</div>
+                    <div class="stat-content">
+                        <div class="stat-value">{{ submissions|selectattr("result", "equalto", "FAIL")|list|length }}
+                        </div>
+                        <div class="stat-label">Failed Tests</div>
+                    </div>
+                </div>
+
+                <div class="stat-card error">
+                    <div class="stat-icon">⚠️</div>
+                    <div class="stat-content">
+                        <div class="stat-value">{{ submissions|selectattr("result", "equalto", "ERROR")|list|length }}
+                        </div>
+                        <div class="stat-label">Runtime Errors</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">🎯</div>
+                    <div class="stat-content">
+                        <div class="stat-value">{{ "%.1f"|format((submissions|selectattr("result", "equalto",
+                            "PASS")|list|length / submissions|length * 100) if submissions|length > 0 else 0) }}%</div>
+                        <div class="stat-label">Success Rate</div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        {% if submissions %}
-            <div class="card">
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>Problem</th>
-                                    <th>Language</th>
-                                    <th>Result</th>
-                                    <th>Submitted</th>
-                                    <th>Time</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for submission in submissions %}
-                                <tr>
-                                    <td>
-                                        <a href="{{ url_for('problem_detail', problem_id=submission.problem_id) }}" 
-                                           class="text-decoration-none">
-                                            Problem #{{ submission.problem_id }}
-                                        </a>
-                                    </td>
-                                    <td>
-                                        <span class="badge bg-secondary">{{ submission.language.title() }}</span>
-                                    </td>
-                                    <td>
-                                        <span class="badge 
-                                            {% if submission.result == 'PASS' %}bg-success
-                                            {% elif submission.result == 'FAIL' %}bg-danger
-                                            {% else %}bg-warning{% endif %}">
-                                            {% if submission.result == 'PASS' %}✅ PASS
-                                            {% elif submission.result == 'FAIL' %}❌ FAIL
-                                            {% else %}🛑 ERROR{% endif %}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <small class="text-muted">{{ submission.submitted_at }}</small>
-                                    </td>
-                                    <td>
-                                        {% if submission.execution_time %}
-                                            <small class="text-muted">{{ "%.3f"|format(submission.execution_time) }}s</small>
-                                        {% else %}
-                                            <small class="text-muted">-</small>
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        <button class="btn btn-sm btn-outline-primary" 
-                                                onclick="toggleCode({{ submission.id }})">
-                                            <i class="fas fa-code"></i> View Code
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr id="code-row-{{ submission.id }}" class="collapse">
-                                    <td colspan="6" class="bg-light">
-                                        <div class="p-3">
-                                            <h6>Submitted Code:</h6>
-                                            <pre class="bg-white p-3 rounded border"><code>{{ submission.code }}</code></pre>
-                                            {% if submission.error_message and submission.result == 'ERROR' %}
-                                            <div class="mt-2">
-                                                <h6 class="text-danger">Error Message:</h6>
-                                                <div class="alert alert-danger">{{ submission.error_message }}</div>
-                                            </div>
-                                            {% endif %}
-                                        </div>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+        <!-- Table View -->
+        <div class="submissions-table-view" id="tableView">
+            <div class="cyber-table-container">
+                <table class="submissions-table">
+                    <thead>
+                        <tr>
+                            <th class="sortable" data-sort="problem">
+                                <span class="th-content">Problem</span>
+                                <span class="sort-indicator">⇅</span>
+                            </th>
+                            <th class="sortable" data-sort="language">
+                                <span class="th-content">Language</span>
+                                <span class="sort-indicator">⇅</span>
+                            </th>
+                            <th class="sortable" data-sort="result">
+                                <span class="th-content">Result</span>
+                                <span class="sort-indicator">⇅</span>
+                            </th>
+                            <th class="sortable" data-sort="time">
+                                <span class="th-content">Execution</span>
+                                <span class="sort-indicator">⇅</span>
+                            </th>
+                            <th class="sortable" data-sort="submitted">
+                                <span class="th-content">Submitted</span>
+                                <span class="sort-indicator">⇅</span>
+                            </th>
+                            <th class="actions-col">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="submissionsTableBody">
+                        {% for submission in submissions %}
+                        <tr class="submission-row" data-problem="{{ submission.problem_id }}"
+                            data-status="{{ submission.result }}" data-language="{{ submission.language }}">
+                            <td class="problem-cell">
+                                <a href="{{ url_for('problem_detail', problem_id=submission.problem_id) }}"
+                                    class="problem-link">
+                                    <span class="problem-id">#{{ submission.problem_id }}</span>
+                                    <span class="problem-title">Problem {{ submission.problem_id }}</span>
+                                </a>
+                            </td>
 
-            <!-- Summary Statistics -->
-            <div class="row mt-4">
-                <div class="col-md-3">
-                    <div class="card text-center">
-                        <div class="card-body">
-                            <h5 class="card-title text-primary">{{ submissions|length }}</h5>
-                            <p class="card-text">Total Submissions</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card text-center">
-                        <div class="card-body">
-                            <h5 class="card-title text-success">
-                                {{ submissions|selectattr("result", "equalto", "PASS")|list|length }}
-                            </h5>
-                            <p class="card-text">Successful</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card text-center">
-                        <div class="card-body">
-                            <h5 class="card-title text-danger">
-                                {{ submissions|selectattr("result", "equalto", "FAIL")|list|length }}
-                            </h5>
-                            <p class="card-text">Failed</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card text-center">
-                        <div class="card-body">
-                            <h5 class="card-title text-warning">
-                                {{ submissions|selectattr("result", "equalto", "ERROR")|list|length }}
-                            </h5>
-                            <p class="card-text">Errors</p>
-                        </div>
-                    </div>
-                </div>
+                            <td class="language-cell">
+                                <span class="language-badge language-{{ submission.language }}">
+                                    {{ submission.language.title() }}
+                                </span>
+                            </td>
+
+                            <td class="result-cell">
+                                <span class="result-badge result-{{ submission.result.lower() }}">
+                                    {% if submission.result == 'PASS' %}
+                                    <span class="result-icon">✅</span>
+                                    <span class="result-text">PASSED</span>
+                                    {% elif submission.result == 'FAIL' %}
+                                    <span class="result-icon">❌</span>
+                                    <span class="result-text">FAILED</span>
+                                    {% else %}
+                                    <span class="result-icon">⚠️</span>
+                                    <span class="result-text">ERROR</span>
+                                    {% endif %}
+                                </span>
+                            </td>
+
+                            <td class="time-cell">
+                                {% if submission.execution_time %}
+                                <span class="execution-time">{{ "%.3f"|format(submission.execution_time) }}s</span>
+                                {% else %}
+                                <span class="execution-time na">N/A</span>
+                                {% endif %}
+                            </td>
+
+                            <td class="submitted-cell">
+                                <span class="submitted-time" title="{{ submission.submitted_at }}">
+                                    {{ submission.submitted_at.strftime('%m/%d %H:%M') if submission.submitted_at else
+                                    'N/A' }}
+                                </span>
+                            </td>
+
+                            <td class="actions-cell">
+                                <button class="btn-action btn-view-code"
+                                    onclick="toggleSubmissionCode({{ submission.id }})" title="View Code">
+                                    <span class="action-icon">👁️</span>
+                                </button>
+                                <button class="btn-action btn-retry"
+                                    onclick="retrySubmission({{ submission.problem_id }}, '{{ submission.language }}')"
+                                    title="Retry Problem">
+                                    <span class="action-icon">🔄</span>
+                                </button>
+                            </td>
+                        </tr>
+
+                        <!-- Expandable Code Row -->
+                        <tr class="code-row" id="codeRow{{ submission.id }}" style="display: none;">
+                            <td colspan="6" class="code-cell">
+                                <div class="code-container">
+                                    <div class="code-header">
+                                        <div class="code-title">
+                                            <span class="code-icon">💻</span>
+                                            <span>Submitted Code</span>
+                                            <span class="code-language">{{ submission.language }}</span>
+                                        </div>
+                                        <button class="btn-copy-code" onclick="copySubmissionCode({{ submission.id }})"
+                                            title="Copy Code">
+                                            <span class="copy-icon">📋</span>
+                                        </button>
+                                    </div>
+
+                                    <div class="code-content">
+                                        <pre class="code-block"
+                                            id="codeBlock{{ submission.id }}"><code>{{ submission.code }}</code></pre>
+                                    </div>
+
+                                    {% if submission.error_message and submission.result == 'ERROR' %}
+                                    <div class="error-section">
+                                        <div class="error-header">
+                                            <span class="error-icon">🚨</span>
+                                            <span>Error Details</span>
+                                        </div>
+                                        <div class="error-content">
+                                            <pre class="error-message">{{ submission.error_message }}</pre>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
+        </div>
+
+        <!-- Card View (Mobile-friendly) -->
+        <div class="submissions-card-view" id="cardView" style="display: none;">
+            <div class="submissions-grid" id="submissionsCardGrid">
+                {% for submission in submissions %}
+                <div class="submission-card" data-problem="{{ submission.problem_id }}"
+                    data-status="{{ submission.result }}" data-language="{{ submission.language }}">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <a href="{{ url_for('problem_detail', problem_id=submission.problem_id) }}"
+                                class="problem-link">
+                                Problem #{{ submission.problem_id }}
+                            </a>
+                        </div>
+                        <div class="card-meta">
+                            <span class="language-badge language-{{ submission.language }}">
+                                {{ submission.language.title() }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="card-result">
+                            <span class="result-badge result-{{ submission.result.lower() }}">
+                                {% if submission.result == 'PASS' %}
+                                <span class="result-icon">✅</span>
+                                <span class="result-text">PASSED</span>
+                                {% elif submission.result == 'FAIL' %}
+                                <span class="result-icon">❌</span>
+                                <span class="result-text">FAILED</span>
+                                {% else %}
+                                <span class="result-icon">⚠️</span>
+                                <span class="result-text">ERROR</span>
+                                {% endif %}
+                            </span>
+                        </div>
+
+                        <div class="card-stats">
+                            <div class="stat-item">
+                                <span class="stat-label">Execution:</span>
+                                <span class="stat-value">
+                                    {% if submission.execution_time %}
+                                    {{ "%.3f"|format(submission.execution_time) }}s
+                                    {% else %}
+                                    N/A
+                                    {% endif %}
+                                </span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Submitted:</span>
+                                <span class="stat-value">
+                                    {{ submission.submitted_at.strftime('%m/%d %H:%M') if submission.submitted_at else
+                                    'N/A' }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-actions">
+                        <button class="btn-card-action" onclick="toggleSubmissionCode({{ submission.id }})">
+                            <span class="action-icon">👁️</span>
+                            <span>View Code</span>
+                        </button>
+                        <button class="btn-card-action"
+                            onclick="retrySubmission({{ submission.problem_id }}, '{{ submission.language }}')">
+                            <span class="action-icon">🔄</span>
+                            <span>Retry</span>
+                        </button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
         {% else %}
-            <div class="text-center py-5">
-                <i class="fas fa-history fa-4x text-muted mb-3"></i>
-                <h4 class="text-muted">No submissions yet</h4>
-                <p class="text-muted">Your submission history will appear here once you start solving problems.</p>
-                <a href="{{ url_for('problems_list') }}" class="btn btn-primary">
-                    <i class="fas fa-code"></i> Start Solving Problems
+        <!-- Empty State -->
+        <div class="empty-state">
+            <div class="empty-icon">
+                <span class="text-accent text-mono">📊</span>
+            </div>
+            <h3 class="empty-title">No Submissions Found</h3>
+            <p class="empty-description text-secondary">
+                Your coding journey starts here. Begin solving challenges to build your submission archive.
+            </p>
+            <div class="empty-action">
+                <a href="{{ url_for('problems_list') }}" class="btn-cyber-primary">
+                    <span>Initialize_Challenge()</span>
+                    <span class="ms-2">→</span>
                 </a>
             </div>
+        </div>
         {% endif %}
     </div>
-</div>
+</section>
 {% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <style>
-pre code {
-    font-size: 12px;
-    max-height: 300px;
-    overflow-y: auto;
-}
+    /* Submissions Page Layout */
+    .submissions-page {
+        background: var(--bg-primary);
+        min-height: 100vh;
+    }
 
-.table-responsive {
-    border-radius: 0.375rem;
-}
+    /* Submissions Header */
+    .submissions-header {
+        background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+        border-bottom: 1px solid var(--border-primary);
+    }
 
-.card {
-    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-}
+    .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: var(--space-6);
+        flex-wrap: wrap;
+    }
+
+    .header-title-section {
+        flex: 1;
+        min-width: 300px;
+    }
+
+    .section-title {
+        font-size: 2.5rem;
+        font-weight: var(--font-weight-bold);
+        font-family: var(--font-display);
+        color: var(--text-primary);
+        margin-bottom: var(--space-3);
+        line-height: var(--line-height-tight);
+    }
+
+    .section-subtitle {
+        font-size: 1.125rem;
+        line-height: 1.6;
+        margin-bottom: 2rem;
+    }
+
+    .header-stats {
+        display: flex;
+        align-items: center;
+        gap: var(--space-4);
+    }
+
+    .user-info {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        font-family: var(--font-mono);
+        font-size: var(--text-sm);
+    }
+
+    .user-label {
+        color: var(--text-secondary);
+    }
+
+    .user-name {
+        color: var(--accent-primary);
+        font-weight: var(--font-weight-semibold);
+    }
+
+    .user-status {
+        color: var(--accent-primary);
+        font-size: 0.75rem;
+    }
+
+    /* Controls Section */
+    .submissions-controls {
+        background: var(--bg-secondary);
+        border-bottom: 1px solid var(--border-primary);
+    }
+
+    .controls-wrapper {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: var(--space-4);
+        flex-wrap: wrap;
+    }
+
+    .filter-section {
+        display: flex;
+        gap: var(--space-4);
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .filter-group {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+    }
+
+    .filter-label {
+        font-family: var(--font-mono);
+        font-size: var(--text-sm);
+        color: var(--text-secondary);
+        font-weight: var(--font-weight-medium);
+        min-width: 60px;
+    }
+
+    .filter-select {
+        background: var(--bg-tertiary);
+        border: 1px solid var(--border-primary);
+        color: var(--text-primary);
+        padding: var(--space-2) var(--space-3);
+        border-radius: var(--radius-sm);
+        font-family: var(--font-mono);
+        font-size: var(--text-sm);
+        min-width: 120px;
+        cursor: pointer;
+        transition: var(--transition-fast);
+    }
+
+    .filter-select:focus {
+        border-color: var(--accent-primary);
+        box-shadow: 0 0 10px var(--accent-glow);
+        outline: none;
+    }
+
+    .view-controls {
+        display: flex;
+        gap: var(--space-1);
+    }
+
+    .btn-view-toggle {
+        background: transparent;
+        border: 1px solid var(--border-primary);
+        color: var(--text-secondary);
+        padding: var(--space-2);
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        transition: var(--transition-fast);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+    }
+
+    .btn-view-toggle:hover,
+    .btn-view-toggle.active {
+        border-color: var(--accent-primary);
+        color: var(--accent-primary);
+        background: rgba(0, 255, 136, 0.1);
+    }
+
+    .view-icon {
+        font-size: 1rem;
+    }
+
+    /* Statistics Overview */
+    .stats-overview {
+        margin-bottom: var(--space-8);
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: var(--space-4);
+    }
+
+    .stat-card {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-primary);
+        border-radius: var(--radius-md);
+        padding: var(--space-4);
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        transition: var(--transition-normal);
+    }
+
+    .stat-card:hover {
+        border-color: var(--accent-primary);
+        box-shadow: 0 0 20px var(--accent-glow);
+        transform: translateY(-2px);
+    }
+
+    .stat-card.success {
+        border-color: var(--status-success-border);
+    }
+
+    .stat-card.warning {
+        border-color: var(--status-warning-border);
+    }
+
+    .stat-card.error {
+        border-color: var(--status-error-border);
+    }
+
+    .stat-icon {
+        font-size: 2rem;
+        opacity: 0.8;
+    }
+
+    .stat-content {
+        flex: 1;
+    }
+
+    .stat-value {
+        font-size: 1.5rem;
+        font-weight: var(--font-weight-bold);
+        font-family: var(--font-mono);
+        color: var(--text-primary);
+        line-height: 1;
+        margin-bottom: var(--space-1);
+    }
+
+    .stat-label {
+        font-size: var(--text-sm);
+        color: var(--text-secondary);
+        font-family: var(--font-mono);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    /* Table View */
+    .cyber-table-container {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-primary);
+        border-radius: var(--radius-md);
+        overflow: hidden;
+    }
+
+    .submissions-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-family: var(--font-mono);
+        font-size: var(--text-sm);
+    }
+
+    .submissions-table thead {
+        background: var(--bg-tertiary);
+        border-bottom: 1px solid var(--border-primary);
+    }
+
+    .submissions-table th {
+        padding: var(--space-3) var(--space-4);
+        text-align: left;
+        font-weight: var(--font-weight-semibold);
+        color: var(--text-primary);
+        border-right: 1px solid var(--border-secondary);
+        cursor: pointer;
+        transition: var(--transition-fast);
+        user-select: none;
+    }
+
+    .submissions-table th:last-child {
+        border-right: none;
+    }
+
+    .submissions-table th:hover {
+        background: var(--bg-primary);
+        color: var(--accent-primary);
+    }
+
+    .th-content {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+    }
+
+    .sort-indicator {
+        opacity: 0.5;
+        font-size: 0.75rem;
+    }
+
+    .submissions-table td {
+        padding: var(--space-3) var(--space-4);
+        border-bottom: 1px solid var(--border-secondary);
+        border-right: 1px solid var(--border-secondary);
+        vertical-align: middle;
+    }
+
+    .submissions-table td:last-child {
+        border-right: none;
+    }
+
+    .submission-row {
+        transition: var(--transition-fast);
+    }
+
+    .submission-row:hover {
+        background: var(--bg-tertiary);
+    }
+
+    /* Table Cell Styles */
+    .problem-link {
+        color: var(--text-primary);
+        text-decoration: none;
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-1);
+        transition: var(--transition-fast);
+    }
+
+    .problem-link:hover {
+        color: var(--accent-primary);
+    }
+
+    .problem-id {
+        font-weight: var(--font-weight-bold);
+        color: var(--accent-primary);
+    }
+
+    .problem-title {
+        font-size: var(--text-xs);
+        color: var(--text-secondary);
+    }
+
+    .language-badge {
+        padding: var(--space-1) var(--space-2);
+        border-radius: var(--radius-sm);
+        font-size: var(--text-xs);
+        font-weight: var(--font-weight-medium);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .language-python {
+        background: rgba(52, 144, 220, 0.2);
+        color: #3490dc;
+        border: 1px solid rgba(52, 144, 220, 0.3);
+    }
+
+    .language-javascript {
+        background: rgba(241, 196, 15, 0.2);
+        color: #f1c40f;
+        border: 1px solid rgba(241, 196, 15, 0.3);
+    }
+
+    .language-java {
+        background: rgba(231, 76, 60, 0.2);
+        color: #e74c3c;
+        border: 1px solid rgba(231, 76, 60, 0.3);
+    }
+
+    .language-cpp {
+        background: rgba(155, 89, 182, 0.2);
+        color: #9b59b6;
+        border: 1px solid rgba(155, 89, 182, 0.3);
+    }
+
+    .result-badge {
+        display: flex;
+        align-items: center;
+        gap: var(--space-1);
+        padding: var(--space-1) var(--space-2);
+        border-radius: var(--radius-sm);
+        font-size: var(--text-xs);
+        font-weight: var(--font-weight-bold);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .result-pass {
+        background: var(--status-success-bg);
+        color: var(--status-success);
+        border: 1px solid var(--status-success-border);
+    }
+
+    .result-fail {
+        background: var(--status-warning-bg);
+        color: var(--status-warning);
+        border: 1px solid var(--status-warning-border);
+    }
+
+    .result-error {
+        background: var(--status-error-bg);
+        color: var(--status-error);
+        border: 1px solid var(--status-error-border);
+    }
+
+    .execution-time {
+        font-family: var(--font-mono);
+        font-weight: var(--font-weight-medium);
+    }
+
+    .execution-time.na {
+        color: var(--text-muted);
+    }
+
+    .submitted-time {
+        font-family: var(--font-mono);
+        color: var(--text-secondary);
+    }
+
+    .actions-cell {
+        text-align: center;
+    }
+
+    .btn-action {
+        background: transparent;
+        border: 1px solid var(--border-primary);
+        color: var(--text-secondary);
+        padding: var(--space-1);
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        transition: var(--transition-fast);
+        margin: 0 var(--space-1);
+        width: 32px;
+        height: 32px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-action:hover {
+        border-color: var(--accent-primary);
+        color: var(--accent-primary);
+        background: rgba(0, 255, 136, 0.1);
+    }
+
+    /* Code Row Styles */
+    .code-row {
+        background: var(--bg-primary);
+    }
+
+    .code-cell {
+        padding: 0 !important;
+    }
+
+    .code-container {
+        border-top: 1px solid var(--border-primary);
+    }
+
+    .code-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: var(--space-3) var(--space-4);
+        background: var(--bg-tertiary);
+        border-bottom: 1px solid var(--border-secondary);
+    }
+
+    .code-title {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        font-family: var(--font-mono);
+        font-weight: var(--font-weight-medium);
+        color: var(--text-primary);
+    }
+
+    .code-language {
+        background: var(--bg-secondary);
+        padding: var(--space-1) var(--space-2);
+        border-radius: var(--radius-sm);
+        font-size: var(--text-xs);
+        color: var(--accent-primary);
+        border: 1px solid var(--border-primary);
+    }
+
+    .btn-copy-code {
+        background: transparent;
+        border: 1px solid var(--border-primary);
+        color: var(--text-secondary);
+        padding: var(--space-1) var(--space-2);
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        transition: var(--transition-fast);
+        font-size: var(--text-xs);
+    }
+
+    .btn-copy-code:hover {
+        border-color: var(--accent-primary);
+        color: var(--accent-primary);
+    }
+
+    .code-content {
+        padding: var(--space-4);
+    }
+
+    .code-block {
+        background: var(--bg-tertiary);
+        border: 1px solid var(--border-secondary);
+        border-radius: var(--radius-sm);
+        padding: var(--space-3);
+        margin: 0;
+        font-family: var(--font-mono);
+        font-size: var(--text-sm);
+        color: var(--text-primary);
+        overflow-x: auto;
+        white-space: pre;
+        line-height: 1.5;
+        max-height: 400px;
+        overflow-y: auto;
+    }
+
+    .error-section {
+        margin-top: var(--space-4);
+        padding: var(--space-4);
+        background: var(--status-error-bg);
+        border: 1px solid var(--status-error-border);
+        border-radius: var(--radius-sm);
+    }
+
+    .error-header {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        margin-bottom: var(--space-3);
+        font-family: var(--font-mono);
+        font-weight: var(--font-weight-medium);
+        color: var(--status-error);
+    }
+
+    .error-message {
+        background: var(--bg-primary);
+        border: 1px solid var(--status-error-border);
+        border-radius: var(--radius-sm);
+        padding: var(--space-3);
+        margin: 0;
+        font-family: var(--font-mono);
+        font-size: var(--text-sm);
+        color: var(--status-error);
+        white-space: pre-wrap;
+        overflow-x: auto;
+    }
+
+    /* Card View */
+    .submissions-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: var(--space-4);
+    }
+
+    .submission-card {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-primary);
+        border-radius: var(--radius-md);
+        overflow: hidden;
+        transition: var(--transition-normal);
+    }
+
+    .submission-card:hover {
+        border-color: var(--accent-primary);
+        box-shadow: 0 0 20px var(--accent-glow);
+        transform: translateY(-2px);
+    }
+
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: var(--space-4);
+        background: var(--bg-tertiary);
+        border-bottom: 1px solid var(--border-primary);
+    }
+
+    .card-title {
+        font-family: var(--font-mono);
+        font-weight: var(--font-weight-semibold);
+    }
+
+    .card-body {
+        padding: var(--space-4);
+    }
+
+    .card-result {
+        margin-bottom: var(--space-3);
+    }
+
+    .card-stats {
+        display: flex;
+        justify-content: space-between;
+        gap: var(--space-4);
+    }
+
+    .stat-item {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-1);
+    }
+
+    .stat-label {
+        font-size: var(--text-xs);
+        color: var(--text-muted);
+        font-family: var(--font-mono);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .stat-value {
+        font-family: var(--font-mono);
+        font-weight: var(--font-weight-medium);
+        color: var(--text-primary);
+    }
+
+    .card-actions {
+        display: flex;
+        gap: var(--space-2);
+        padding: var(--space-3) var(--space-4);
+        background: var(--bg-primary);
+        border-top: 1px solid var(--border-primary);
+    }
+
+    .btn-card-action {
+        flex: 1;
+        background: transparent;
+        border: 1px solid var(--border-primary);
+        color: var(--text-secondary);
+        padding: var(--space-2) var(--space-3);
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        transition: var(--transition-fast);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--space-2);
+        font-family: var(--font-mono);
+        font-size: var(--text-sm);
+    }
+
+    .btn-card-action:hover {
+        border-color: var(--accent-primary);
+        color: var(--accent-primary);
+        background: rgba(0, 255, 136, 0.1);
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        max-width: 500px;
+        margin: 0 auto;
+    }
+
+    .empty-icon {
+        font-size: 4rem;
+        margin-bottom: 2rem;
+        opacity: 0.6;
+    }
+
+    .empty-title {
+        font-size: 1.5rem;
+        font-weight: var(--font-weight-semibold);
+        color: var(--text-primary);
+        margin-bottom: 1rem;
+    }
+
+    .empty-description {
+        font-size: 1rem;
+        line-height: 1.6;
+        margin-bottom: 2rem;
+    }
+
+    .empty-action {
+        margin-top: 2rem;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1024px) {
+        .controls-wrapper {
+            flex-direction: column;
+            align-items: stretch;
+            gap: var(--space-3);
+        }
+
+        .filter-section {
+            justify-content: center;
+        }
+
+        .view-controls {
+            justify-content: center;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .section-title {
+            font-size: 2rem;
+        }
+
+        .header-content {
+            flex-direction: column;
+            text-align: center;
+            gap: var(--space-4);
+        }
+
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .filter-section {
+            flex-direction: column;
+            gap: var(--space-2);
+        }
+
+        .filter-group {
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .filter-select {
+            flex: 1;
+            min-width: 0;
+        }
+
+        /* Hide table view on mobile, show cards */
+        .submissions-table-view {
+            display: none !important;
+        }
+
+        .submissions-card-view {
+            display: block !important;
+        }
+
+        .view-controls {
+            display: none;
+        }
+
+        .submissions-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .card-stats {
+            flex-direction: column;
+            gap: var(--space-2);
+        }
+
+        .card-actions {
+            flex-direction: column;
+        }
+    }
+
+    /* Animation Classes */
+    .animate-slide-up {
+        animation: slideUp 0.3s ease-out;
+    }
+
+    @keyframes slideUp {
+        from {
+            transform: translateY(20px);
+            opacity: 0;
+        }
+
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    .animate-pulse {
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+
+        0%,
+        100% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0.5;
+        }
+    }
 </style>
 {% endblock %}
 
 {% block extra_js %}
 <script>
-function toggleCode(submissionId) {
-    const codeRow = document.getElementById(`code-row-${submissionId}`);
-    const isVisible = codeRow.classList.contains('show');
-    
-    // Hide all other code rows
-    document.querySelectorAll('[id^="code-row-"]').forEach(row => {
-        row.classList.remove('show');
+    // Submission History JavaScript
+    document.addEventListener('DOMContentLoaded', function () {
+        initializeSubmissionHistory();
     });
-    
-    // Toggle current row
-    if (!isVisible) {
-        codeRow.classList.add('show');
+
+    function initializeSubmissionHistory() {
+        initializeFilters();
+        initializeViewToggle();
+        initializeSorting();
+        initializeAnimations();
     }
+
+    // Filter Functionality
+    function initializeFilters() {
+        const problemFilter = document.getElementById('problemFilter');
+        const statusFilter = document.getElementById('statusFilter');
+        const languageFilter = document.getElementById('languageFilter');
+
+        if (problemFilter) problemFilter.addEventListener('change', applyFilters);
+        if (statusFilter) statusFilter.addEventListener('change', applyFilters);
+        if (languageFilter) languageFilter.addEventListener('change', applyFilters);
+    }
+
+    function applyFilters() {
+        const problemFilter = document.getElementById('problemFilter').value;
+        const statusFilter = document.getElementById('statusFilter').value;
+        const languageFilter = document.getElementById('languageFilter').value;
+
+        // Filter table rows
+        const tableRows = document.querySelectorAll('.submission-row');
+        tableRows.forEach(row => {
+            const problem = row.dataset.problem;
+            const status = row.dataset.status;
+            const language = row.dataset.language;
+
+            const matchesProblem = !problemFilter || problem === problemFilter;
+            const matchesStatus = !statusFilter || status === statusFilter;
+            const matchesLanguage = !languageFilter || language === languageFilter;
+
+            const shouldShow = matchesProblem && matchesStatus && matchesLanguage;
+
+            // Toggle row and its corresponding code row
+            row.style.display = shouldShow ? '' : 'none';
+            const codeRow = document.getElementById(`codeRow${row.querySelector('.btn-view-code')?.onclick?.toString().match(/\d+/)?.[0] || ''}`);
+            if (codeRow) {
+                codeRow.style.display = shouldShow ? 'none' : 'none'; // Always hide code rows when filtering
+            }
+        });
+
+        // Filter card view
+        const cards = document.querySelectorAll('.submission-card');
+        cards.forEach(card => {
+            const problem = card.dataset.problem;
+            const status = card.dataset.status;
+            const language = card.dataset.language;
+
+            const matchesProblem = !problemFilter || problem === problemFilter;
+            const matchesStatus = !statusFilter || status === statusFilter;
+            const matchesLanguage = !languageFilter || language === languageFilter;
+
+            const shouldShow = matchesProblem && matchesStatus && matchesLanguage;
+            card.style.display = shouldShow ? '' : 'none';
+        });
+
+        // Update empty state
+        updateEmptyState();
+    }
+
+    function updateEmptyState() {
+        const visibleRows = document.querySelectorAll('.submission-row[style=""], .submission-row:not([style])');
+        const visibleCards = document.querySelectorAll('.submission-card[style=""], .submission-card:not([style])');
+
+        const hasVisibleItems = visibleRows.length > 0 || visibleCards.length > 0;
+
+        // You can add empty state logic here if needed
+        if (!hasVisibleItems) {
+            console.log('No items match current filters');
+        }
+    }
+
+    // View Toggle Functionality
+    function initializeViewToggle() {
+        const viewToggleButtons = document.querySelectorAll('.btn-view-toggle');
+        const tableView = document.getElementById('tableView');
+        const cardView = document.getElementById('cardView');
+
+        viewToggleButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const view = this.dataset.view;
+
+                // Update active button
+                viewToggleButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+
+                // Toggle views
+                if (view === 'table') {
+                    if (tableView) tableView.style.display = 'block';
+                    if (cardView) cardView.style.display = 'none';
+                } else {
+                    if (tableView) tableView.style.display = 'none';
+                    if (cardView) cardView.style.display = 'block';
+                }
+
+                // Store preference
+                localStorage.setItem('submissionsView', view);
+            });
+        });
+
+        // Load saved preference
+        const savedView = localStorage.getItem('submissionsView');
+        if (savedView) {
+            const button = document.querySelector(`[data-view="${savedView}"]`);
+            if (button) button.click();
+        }
+    }
+
+    // Sorting Functionality
+    function initializeSorting() {
+        const sortableHeaders = document.querySelectorAll('.sortable');
+        let currentSort = { column: null, direction: 'asc' };
+
+        sortableHeaders.forEach(header => {
+            header.addEventListener('click', function () {
+                const column = this.dataset.sort;
+
+                // Update sort direction
+                if (currentSort.column === column) {
+                    currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+                } else {
+                    currentSort.column = column;
+                    currentSort.direction = 'asc';
+                }
+
+                // Update UI indicators
+                sortableHeaders.forEach(h => {
+                    const indicator = h.querySelector('.sort-indicator');
+                    if (h === this) {
+                        indicator.textContent = currentSort.direction === 'asc' ? '↑' : '↓';
+                        indicator.style.opacity = '1';
+                    } else {
+                        indicator.textContent = '⇅';
+                        indicator.style.opacity = '0.5';
+                    }
+                });
+
+                // Sort table
+                sortTable(column, currentSort.direction);
+            });
+        });
+    }
+
+    function sortTable(column, direction) {
+        const tbody = document.getElementById('submissionsTableBody');
+        if (!tbody) return;
+
+        const rows = Array.from(tbody.querySelectorAll('.submission-row'));
+
+        rows.sort((a, b) => {
+            let aValue, bValue;
+
+            switch (column) {
+                case 'problem':
+                    aValue = parseInt(a.dataset.problem);
+                    bValue = parseInt(b.dataset.problem);
+                    break;
+                case 'language':
+                    aValue = a.dataset.language;
+                    bValue = b.dataset.language;
+                    break;
+                case 'result':
+                    const resultOrder = { 'PASS': 3, 'FAIL': 2, 'ERROR': 1 };
+                    aValue = resultOrder[a.dataset.status] || 0;
+                    bValue = resultOrder[b.dataset.status] || 0;
+                    break;
+                case 'time':
+                    aValue = parseFloat(a.querySelector('.execution-time').textContent) || 0;
+                    bValue = parseFloat(b.querySelector('.execution-time').textContent) || 0;
+                    break;
+                case 'submitted':
+                    aValue = new Date(a.querySelector('.submitted-time').title || a.querySelector('.submitted-time').textContent);
+                    bValue = new Date(b.querySelector('.submitted-time').title || b.querySelector('.submitted-time').textContent);
+                    break;
+                default:
+                    return 0;
+            }
+
+            if (typeof aValue === 'string') {
+                aValue = aValue.toLowerCase();
+                bValue = bValue.toLowerCase();
+            }
+
+            if (direction === 'asc') {
+                return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
+            } else {
+                return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
+            }
+        });
+
+        // Reorder rows in DOM
+        rows.forEach(row => {
+            tbody.appendChild(row);
+            // Also move the corresponding code row
+            const codeRow = row.nextElementSibling;
+            if (codeRow && codeRow.classList.contains('code-row')) {
+                tbody.appendChild(codeRow);
+            }
+        });
+    }
+
+    // Animation Functionality
+    function initializeAnimations() {
+        // Add slide-up animation to cards and rows
+        const animateElements = document.querySelectorAll('.submission-card, .submission-row');
+        animateElements.forEach((element, index) => {
+            setTimeout(() => {
+                element.classList.add('animate-slide-up');
+            }, index * 50);
+        });
+    }
+
+    // Code Toggle Functionality
+    function toggleSubmissionCode(submissionId) {
+        const codeRow = document.getElementById(`codeRow${submissionId}`);
+        if (!codeRow) return;
+
+        const isVisible = codeRow.style.display !== 'none';
+
+        // Hide all other code rows
+        document.querySelectorAll('.code-row').forEach(row => {
+            row.style.display = 'none';
+        });
+
+        // Toggle current row
+        if (!isVisible) {
+            codeRow.style.display = 'table-row';
+            codeRow.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    }
+
+    // Copy Code Functionality
+    function copySubmissionCode(submissionId) {
+        const codeBlock = document.getElementById(`codeBlock${submissionId}`);
+        if (!codeBlock) return;
+
+        const code = codeBlock.textContent;
+
+        navigator.clipboard.writeText(code).then(() => {
+            showNotification('Code copied to clipboard!', 'success');
+        }).catch(() => {
+            // Fallback for older browsers
+            const textArea = document.createElement('textarea');
+            textArea.value = code;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            showNotification('Code copied to clipboard!', 'success');
+        });
+    }
+
+    // Retry Submission Functionality
+    function retrySubmission(problemId, language) {
+        const url = `/problem/${problemId}?lang=${language}`;
+        window.location.href = url;
+    }
+
+    // Notification System
+    function showNotification(message, type = 'info') {
+        // Create notification element
+        const notification = document.createElement('div');
+        notification.className = `notification notification-${type}`;
+        notification.innerHTML = `
+        <div class="notification-content">
+            <span class="notification-icon">
+                ${type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️'}
+            </span>
+            <span class="notification-message">${message}</span>
+        </div>
+    `;
+
+        // Add to page
+        document.body.appendChild(notification);
+
+        // Animate in
+        setTimeout(() => notification.classList.add('show'), 100);
+
+        // Remove after 3 seconds
+        setTimeout(() => {
+            notification.classList.remove('show');
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    document.body.removeChild(notification);
+                }
+            }, 300);
+        }, 3000);
+    }
+
+    // Add notification styles
+    const notificationStyles = `
+<style>
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-md);
+    padding: var(--space-3) var(--space-4);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    transform: translateX(100%);
+    transition: var(--transition-normal);
+    max-width: 300px;
 }
+
+.notification.show {
+    transform: translateX(0);
+}
+
+.notification-content {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.notification-message {
+    color: var(--text-primary);
+    font-size: var(--text-sm);
+}
+
+.notification-success {
+    border-color: var(--status-success-border);
+    background: var(--status-success-bg);
+}
+
+.notification-error {
+    border-color: var(--status-error-border);
+    background: var(--status-error-bg);
+}
+</style>
+`;
+
+    document.head.insertAdjacentHTML('beforeend', notificationStyles);
 </script>
 {% endblock %}

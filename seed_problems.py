@@ -4,7 +4,7 @@ Populates the database with sample coding problems for testing and demonstration
 """
 
 from models import Problem
-from database import init_db
+from init_db import initialize_database
 
 def create_sample_problems():
     """Create sample problems for testing the platform."""
@@ -156,4 +156,39 @@ Example:
 Input: list1 = [1,2,4], list2 = [1,3,4]
 Output: [1,1,2,3,4,4]''',
             'function_signatures': {
-                'python': 'def solution(list1, list2):\n  
+                'python': 'def solution(list1, list2):\n    pass',
+       
+         'javascript': 'function solution(list1, list2) {\n    // Your code here\n}',
+                'java': 'public int[] solution(int[] list1, int[] list2) {\n    // Your code here\n}',
+                'cpp': 'vector<int> solution(vector<int>& list1, vector<int>& list2) {\n    // Your code here\n}'
+            },
+            'test_cases': [
+                {'input': [[1,2,4], [1,3,4]], 'expected_output': [1,1,2,3,4,4]},
+                {'input': [[], []], 'expected_output': []},
+                {'input': [[], [0]], 'expected_output': [0]}
+            ],
+            'sample_input': 'list1 = [1,2,4], list2 = [1,3,4]',
+            'sample_output': '[1,1,2,3,4,4]'
+        }
+    ]
+
+    # Add problems to database
+    for problem_data in problems:
+        try:
+            problem = Problem.create(
+                title=problem_data['title'],
+                difficulty=problem_data['difficulty'],
+                description=problem_data['description'],
+                function_signatures=problem_data['function_signatures'],
+                test_cases=problem_data['test_cases'],
+                sample_input=problem_data['sample_input'],
+                sample_output=problem_data['sample_output']
+            )
+            print(f"✅ Added problem: {problem.title}")
+        except Exception as e:
+            print(f"❌ Failed to add problem {problem_data['title']}: {e}")
+
+    print(f"\n🎉 Successfully seeded {len(problems)} problems!")
+
+if __name__ == "__main__":
+    create_sample_problems()
