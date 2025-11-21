@@ -8,18 +8,19 @@
     width: 100vw;
     height: 100vh;
     background: linear-gradient(135deg, #0a0a0a 0%, #0f0f0f 50%, #0a0a0a 100%);
-    z-index: 9999;
-    display: flex;
+    z-index: 99999;
+    display: none;
     flex-direction: column;
     font-family: 'JetBrains Mono', 'Courier New', monospace;
     color: #00ff88;
     overflow: hidden;
     opacity: 0;
-    transition: opacity 0.5s ease-out;
+    transition: opacity 0.3s ease-out;
 }
 
 .system-info-modal.show {
-    opacity: 1;
+    opacity: 1 !important;
+    display: flex !important;
 }
 
 @keyframes modalFadeIn {
@@ -493,20 +494,209 @@
     
     .terminal-interface {
         grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .terminal-container {
+        padding: 2rem;
+    }
+    
+    .ascii-art {
+        font-size: 0.65rem;
+    }
+    
+    .terminal-panel {
+        padding: 1.5rem;
+        min-height: 180px;
     }
 }
 
 @media (max-width: 768px) {
+    .system-info-modal {
+        /* Ensure full viewport coverage on mobile */
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        height: 100dvh; /* Dynamic viewport height for mobile browsers */
+    }
+    
     .terminal-container {
         padding: 1rem;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    }
+    
+    .terminal-content {
+        gap: 1rem;
+        min-height: auto;
     }
     
     .ascii-art {
-        font-size: 0.6rem;
+        font-size: 0.45rem;
+        line-height: 1.0;
+        padding: 0.5rem;
+    }
+    
+    .boot-sequence {
+        padding: 1rem;
+        min-height: 150px;
+        margin-bottom: 1.5rem;
+    }
+    
+    .boot-line {
+        font-size: 0.8rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .terminal-interface {
+        grid-template-columns: 1fr;
+        gap: 1rem;
     }
     
     .terminal-panel {
         padding: 1rem;
+        min-height: 150px;
+        margin-bottom: 0;
+    }
+    
+    .panel-header {
+        margin-bottom: 1rem;
+        padding-bottom: 0.75rem;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .panel-title {
+        font-size: 0.85rem;
+        letter-spacing: 1px;
+    }
+    
+    .panel-status,
+    .panel-refresh,
+    .panel-indicator {
+        font-size: 0.75rem;
+    }
+    
+    .panel-content {
+        font-size: 0.8rem;
+        line-height: 1.6;
+    }
+    
+    .command-panel {
+        min-height: 300px;
+        margin-top: 1rem;
+    }
+    
+    .command-output {
+        max-height: 200px;
+        padding: 0.75rem;
+        margin-bottom: 1rem;
+    }
+    
+    .command-line {
+        margin-bottom: 0.5rem;
+        font-size: 0.8rem;
+        flex-wrap: wrap;
+    }
+    
+    .command-input-container {
+        padding: 0.75rem;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.5rem;
+    }
+    
+    .command-input {
+        font-size: 0.85rem;
+        padding: 0.5rem 0;
+        margin-left: 0;
+        width: 100%;
+    }
+    
+    .prompt {
+        margin-right: 0;
+        margin-bottom: 0.25rem;
+    }
+    
+    /* Mobile-specific close button */
+    .terminal-close-btn {
+        top: 0.5rem;
+        right: 0.5rem;
+        width: 44px;
+        height: 44px;
+        font-size: 1.25rem;
+        /* Ensure touch target is at least 44px */
+        min-width: 44px;
+        min-height: 44px;
+    }
+    
+    /* Mobile-friendly data display */
+    .status-line,
+    .stat-item,
+    .metric-item {
+        padding: 0.5rem 0;
+        margin-bottom: 0.75rem;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+    }
+    
+    .status-label,
+    .stat-label,
+    .metric-label {
+        font-size: 0.8rem;
+    }
+    
+    .status-value,
+    .stat-value,
+    .metric-value {
+        font-size: 0.9rem;
+        align-self: flex-end;
+    }
+    
+    /* Progress bars on mobile */
+    .progress-bar {
+        height: 6px;
+        margin: 0.75rem 0;
+    }
+    
+    /* Data tables on mobile */
+    .data-table {
+        font-size: 0.8rem;
+    }
+    
+    .data-table th,
+    .data-table td {
+        padding: 0.4rem;
+    }
+}
+
+/* Small mobile devices */
+@media (max-width: 480px) {
+    .terminal-container {
+        padding: 0.75rem;
+    }
+    
+    .ascii-art {
+        font-size: 0.35rem;
+        line-height: 0.9;
+    }
+    
+    .boot-sequence {
+        padding: 0.75rem;
+        min-height: 120px;
+    }
+    
+    .boot-line {
+        font-size: 0.75rem;
+    }
+    
+    .terminal-panel {
+        padding: 0.75rem;
+        min-height: 120px;
     }
     
     .panel-title {
@@ -514,12 +704,308 @@
     }
     
     .panel-content {
-        font-size: 0.8rem;
+        font-size: 0.75rem;
     }
     
     .command-input {
         font-size: 0.8rem;
     }
+    
+    .command-line {
+        font-size: 0.75rem;
+    }
+    
+    .terminal-close-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 1.1rem;
+    }
+}
+
+/* Mobile-specific enhancements */
+.mobile-device .system-info-modal {
+    /* Ensure proper mobile rendering */
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.mobile-device .terminal-container {
+    /* Smooth scrolling on mobile */
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+}
+
+/* Keyboard open state */
+.keyboard-open .terminal-container {
+    height: 50vh;
+    overflow-y: auto;
+}
+
+.keyboard-open .command-panel {
+    position: sticky;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(10px);
+    z-index: 10;
+}
+
+/* Mobile command suggestions */
+.mobile-command-suggestions {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .mobile-command-suggestions {
+        display: flex !important;
+    }
+    
+    .suggestion-btn:hover,
+    .suggestion-btn:active {
+        background: rgba(0, 255, 136, 0.4) !important;
+        transform: scale(0.95);
+    }
+}
+
+/* Touch-friendly interactions */
+@media (hover: none) and (pointer: coarse) {
+    /* Styles for touch devices */
+    .terminal-panel:hover {
+        transform: none;
+        border-color: rgba(0, 255, 136, 0.4);
+    }
+    
+    .system-info-btn:hover {
+        transform: none;
+    }
+    
+    .terminal-close-btn:hover {
+        transform: scale(1.05);
+    }
+    
+    /* Larger touch targets */
+    .terminal-close-btn {
+        min-width: 44px;
+        min-height: 44px;
+    }
+    
+    .suggestion-btn {
+        min-height: 44px;
+        min-width: 44px;
+    }
+}
+
+/* Safe area support for devices with notches */
+@supports (padding-top: env(safe-area-inset-top)) {
+    .system-info-modal {
+        padding-top: env(safe-area-inset-top);
+        padding-bottom: env(safe-area-inset-bottom);
+        padding-left: env(safe-area-inset-left);
+        padding-right: env(safe-area-inset-right);
+    }
+    
+    .terminal-close-btn {
+        top: calc(1rem + env(safe-area-inset-top));
+        right: calc(1rem + env(safe-area-inset-right));
+    }
+}
+
+/* Landscape orientation on mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+    .ascii-art {
+        font-size: 0.4rem;
+        line-height: 0.8;
+    }
+    
+    .boot-sequence {
+        min-height: 100px;
+        padding: 0.75rem;
+    }
+    
+    .terminal-panel {
+        min-height: 120px;
+        padding: 0.75rem;
+    }
+    
+    .command-panel {
+        min-height: 200px;
+    }
+    
+    .command-output {
+        max-height: 120px;
+    }
+}
+
+/* High DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .ascii-art {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+    
+    .terminal-panel {
+        border-width: 0.5px;
+    }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .system-info-modal {
+        background: linear-gradient(135deg, #000000 0%, #0a0a0a 50%, #000000 100%);
+    }
+}
+
+/* Reduced data mode */
+@media (prefers-reduced-data: reduce) {
+    .matrix-background {
+        display: none;
+    }
+    
+    .glitch-effect,
+    .terminal-panel::before {
+        animation: none;
+    }
+}
+
+/* Performance optimizations */
+.system-info-modal {
+    /* Enable hardware acceleration */
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+}
+
+.terminal-panel {
+    /* Optimize for animations */
+    will-change: transform, opacity;
+    contain: layout style paint;
+}
+
+.terminal-panel.loaded {
+    /* Remove will-change after loading */
+    will-change: auto;
+}
+
+/* Optimize matrix background */
+.matrix-background {
+    /* Use GPU acceleration */
+    transform: translateZ(0);
+    will-change: opacity;
+}
+
+/* Optimize command output scrolling */
+.command-output {
+    /* Enable smooth scrolling with GPU */
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    contain: strict;
+}
+
+/* Optimize progress bars */
+.progress-fill,
+[data-live-id$="Bar"] {
+    /* Use transform instead of width changes when possible */
+    will-change: transform, width;
+    contain: layout style;
+}
+
+/* Optimize text rendering */
+.ascii-art,
+.command-text,
+.panel-content {
+    /* Optimize text rendering */
+    text-rendering: optimizeSpeed;
+    -webkit-font-smoothing: subpixel-antialiased;
+}
+
+/* Lazy loading optimization */
+.terminal-panel:not(.loaded) {
+    /* Reduce initial rendering cost */
+    contain: layout;
+}
+
+.terminal-panel.loaded {
+    /* Full rendering after loading */
+    contain: layout style paint;
+}
+
+/* Animation performance */
+@keyframes optimizedFadeIn {
+    from {
+        opacity: 0;
+        transform: translate3d(0, 20px, 0);
+    }
+    to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+.terminal-panel {
+    animation: optimizedFadeIn 0.6s ease-out;
+}
+
+/* Reduce paint operations */
+.status-line:hover,
+.stat-item:hover,
+.metric-item:hover {
+    /* Use transform instead of changing layout */
+    transform: translate3d(5px, 0, 0);
+    will-change: transform;
+}
+
+/* Optimize cursor blinking */
+.cursor-blink {
+    /* Use opacity instead of visibility for better performance */
+    animation: optimizedBlink 1s step-end infinite;
+}
+
+@keyframes optimizedBlink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+}
+
+/* Memory optimization for large content */
+.command-output {
+    /* Limit memory usage for long command histories */
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+/* Optimize for 60fps animations */
+@media (min-resolution: 120dpi) {
+    .terminal-panel,
+    .matrix-background,
+    .glitch-effect {
+        /* Higher quality rendering on high-DPI displays */
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: crisp-edges;
+    }
+}
+
+/* Battery optimization */
+@media (prefers-reduced-motion: reduce) {
+    .terminal-panel,
+    .matrix-background,
+    .glitch-effect,
+    .cursor-blink,
+    .progress-fill {
+        /* Disable all animations to save battery */
+        animation: none !important;
+        transition: none !important;
+    }
+}
+
+/* Screen Reader Only Content */
+.sr-only {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
 }
 
 /* High Contrast Mode */
@@ -542,6 +1028,89 @@
     .metric-value {
         color: #ffffff;
     }
+    
+    .ascii-art {
+        color: #ffffff;
+        text-shadow: none;
+    }
+    
+    .terminal-close-btn {
+        background: #ffffff;
+        color: #000000;
+        border: 2px solid #ffffff;
+    }
+    
+    .command-input {
+        color: #ffffff;
+        border: 1px solid #ffffff;
+    }
+    
+    .suggestion-btn {
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid #ffffff;
+        color: #ffffff;
+    }
+}
+
+/* High contrast mode class for JavaScript control */
+.high-contrast-mode .system-info-modal {
+    background: #000000 !important;
+    color: #ffffff !important;
+}
+
+.high-contrast-mode .terminal-panel {
+    border-color: #ffffff !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+}
+
+.high-contrast-mode .panel-title {
+    color: #ffffff !important;
+    text-shadow: none !important;
+}
+
+.high-contrast-mode .command-text,
+.high-contrast-mode .metric-value,
+.high-contrast-mode .status-value {
+    color: #ffffff !important;
+}
+
+/* Focus indicators for accessibility */
+.system-info-modal *:focus {
+    outline: 2px solid #00ff88;
+    outline-offset: 2px;
+}
+
+.high-contrast-mode *:focus {
+    outline: 2px solid #ffffff !important;
+    outline-offset: 2px;
+}
+
+/* Enhanced focus indicators for keyboard navigation */
+.terminal-panel:focus-within {
+    border-color: #00ff88;
+    box-shadow: 0 0 0 2px rgba(0, 255, 136, 0.3);
+}
+
+.high-contrast-mode .terminal-panel:focus-within {
+    border-color: #ffffff !important;
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3) !important;
+}
+
+/* Skip link for keyboard navigation */
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 6px;
+    background: #000000;
+    color: #ffffff;
+    padding: 8px;
+    text-decoration: none;
+    border-radius: 4px;
+    z-index: 100000;
+}
+
+.skip-link:focus {
+    top: 6px;
 }
 
 /* Reduced Motion */
@@ -549,14 +1118,55 @@
     .system-info-modal,
     .terminal-panel,
     .command-line,
-    .boot-line {
-        animation: none;
+    .boot-line,
+    .glitch-effect {
+        animation: none !important;
+        transition: none !important;
     }
     
     .cursor-blink {
-        animation: none;
-        opacity: 1;
+        animation: none !important;
+        opacity: 1 !important;
     }
+    
+    .matrix-background {
+        display: none;
+    }
+}
+
+/* Adaptive font sizing */
+.system-info-modal {
+    font-size: clamp(0.8rem, 2vw, 1rem);
+}
+
+.ascii-art {
+    font-size: clamp(0.3rem, 1.5vw, 0.75rem);
+}
+
+.panel-title {
+    font-size: clamp(0.8rem, 2.5vw, 1rem);
+}
+
+.panel-content {
+    font-size: clamp(0.75rem, 2vw, 0.95rem);
+}
+
+.command-input {
+    font-size: clamp(0.8rem, 2.2vw, 0.9rem);
+}
+
+/* Adaptive spacing */
+.terminal-container {
+    padding: clamp(0.75rem, 4vw, 3rem);
+}
+
+.terminal-panel {
+    padding: clamp(0.75rem, 3vw, 2rem);
+    margin-bottom: clamp(0.5rem, 2vw, 1rem);
+}
+
+.terminal-interface {
+    gap: clamp(1rem, 3vw, 2.5rem);
 }
 
 /* Print Styles */
@@ -962,4 +1572,313 @@
     0% { transform: scale(1); }
     50% { transform: scale(1.5); }
     100% { transform: scale(1); }
+}
+/* Ad
+vanced Statistics Visualization Styles */
+
+/* ASCII Chart Styles */
+.ascii-chart {
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    margin: 1rem 0;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 6px;
+    border: 1px solid rgba(0, 255, 136, 0.2);
+}
+
+.chart-title {
+    color: #ff6b35;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    text-shadow: 0 0 8px rgba(255, 107, 53, 0.4);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.chart-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.3rem;
+    font-size: 0.8rem;
+}
+
+.chart-label {
+    color: #aaa;
+    min-width: 100px;
+    margin-right: 1rem;
+}
+
+.chart-bar {
+    color: #00ff88;
+    margin-right: 1rem;
+    font-family: monospace;
+    min-width: 200px;
+}
+
+.chart-value {
+    color: #00ff88;
+    font-weight: 600;
+    min-width: 60px;
+    text-align: right;
+}
+
+.chart-empty {
+    color: #666;
+    font-style: italic;
+    text-align: center;
+    padding: 2rem;
+}
+
+/* ASCII Table Styles */
+.ascii-table {
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 0.8rem;
+    line-height: 1.3;
+    margin: 1rem 0;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 6px;
+    border: 1px solid rgba(0, 255, 136, 0.2);
+}
+
+.table-row {
+    display: flex;
+    margin-bottom: 0.2rem;
+}
+
+.table-header .table-cell {
+    color: #ff6b35;
+    font-weight: 600;
+    border-bottom: 1px solid rgba(255, 107, 53, 0.3);
+    padding-bottom: 0.3rem;
+}
+
+.table-separator .table-cell {
+    color: rgba(0, 255, 136, 0.3);
+    font-size: 0.7rem;
+    padding: 0.2rem 0;
+}
+
+.table-cell {
+    color: #00ff88;
+    padding: 0.2rem 0.5rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.table-empty {
+    color: #666;
+    font-style: italic;
+    text-align: center;
+    padding: 2rem;
+}
+
+/* Command Line Styles */
+.command-normal {
+    color: #00ff88;
+}
+
+.command-info {
+    color: #44aaff;
+}
+
+.command-success {
+    color: #00ff88;
+}
+
+.command-warning {
+    color: #ffaa00;
+}
+
+.command-error {
+    color: #ff4444;
+}
+
+.command-system {
+    color: #ff6b35;
+    font-weight: 600;
+}
+
+.command-separator {
+    height: 0.5rem;
+}
+
+.command-processing {
+    color: #ffaa00;
+    animation: processingPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes processingPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.processing-spinner {
+    display: inline-block;
+    margin-right: 0.5rem;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Data Update Animation */
+.terminal-panel.data-updated {
+    border-color: rgba(0, 255, 136, 0.8) !important;
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.3) !important;
+    animation: dataUpdatePulse 1s ease-out;
+}
+
+@keyframes dataUpdatePulse {
+    0% {
+        transform: scale(1);
+        border-color: rgba(0, 255, 136, 0.4);
+    }
+    50% {
+        transform: scale(1.02);
+        border-color: rgba(0, 255, 136, 0.8);
+    }
+    100% {
+        transform: scale(1);
+        border-color: rgba(0, 255, 136, 0.4);
+    }
+}
+
+/* Enhanced Status Indicators */
+.status-operational,
+.status-connected,
+.status-healthy {
+    color: #00ff88 !important;
+    animation: successPulse 2s ease-in-out infinite;
+}
+
+.status-warning,
+.status-degraded {
+    color: #ffaa00 !important;
+    animation: warningPulse 1.5s ease-in-out infinite;
+}
+
+.status-error,
+.status-critical,
+.status-unhealthy {
+    color: #ff4444 !important;
+    animation: errorPulse 1s ease-in-out infinite;
+}
+
+@keyframes successPulse {
+    0%, 100% { 
+        text-shadow: 0 0 8px rgba(0, 255, 136, 0.3);
+    }
+    50% { 
+        text-shadow: 0 0 15px rgba(0, 255, 136, 0.8);
+    }
+}
+
+@keyframes warningPulse {
+    0%, 100% { 
+        text-shadow: 0 0 8px rgba(255, 170, 0, 0.3);
+    }
+    50% { 
+        text-shadow: 0 0 15px rgba(255, 170, 0, 0.8);
+    }
+}
+
+@keyframes errorPulse {
+    0%, 100% { 
+        text-shadow: 0 0 8px rgba(255, 68, 68, 0.3);
+    }
+    50% { 
+        text-shadow: 0 0 15px rgba(255, 68, 68, 0.8);
+    }
+}
+/* Bo
+ot Sequence */
+.boot-sequence {
+    margin-bottom: 3rem;
+    min-height: 250px;
+    padding: 2rem;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 12px;
+    border: 1px solid rgba(0, 255, 136, 0.3);
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.boot-line {
+    color: #00ff88;
+    font-family: monospace;
+    padding: 20px;
+}
+
+.boot-line .system-ready {
+    color: #ff6b35;
+}
+
+.boot-line .loading-text {
+    color: #666;
+    font-size: 14px;
+}
+
+/* Terminal Interface */
+.terminal-interface {
+    display: none;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 2.5rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Terminal Panels */
+.terminal-panel {
+    background: rgba(0, 255, 136, 0.08);
+    border: 1px solid rgba(0, 255, 136, 0.4);
+    border-radius: 12px;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    min-height: 200px;
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid rgba(0, 255, 136, 0.3);
+}
+
+.panel-title {
+    color: #ff6b35;
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 1.5px;
+    text-shadow: 0 0 10px rgba(255, 107, 53, 0.5);
+}
+
+.panel-status,
+.panel-refresh,
+.panel-indicator {
+    color: #00ff88;
+    font-size: 0.8rem;
+}
+
+.panel-content {
+    color: #00ff88;
+    font-size: 0.95rem;
+    line-height: 1.8;
+    padding: 0.5rem 0;
+}
+
+.status-loading {
+    color: #ffaa00;
 }

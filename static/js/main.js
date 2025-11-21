@@ -1,63 +1,530 @@
-/**
+/*!
  * CodeXam Main JavaScript
  * Core functionality for the CodeXam platform
+ * 
+ * @version 2.0.0
+ * @author CodeXam Development Team
+ * @license MIT
  */
+
+/**
+ * CodeXam Application Namespace
+ * Prevents global namespace pollution and provides organized structure
+ */
+const CodeXamApp = {
+  // Application configuration
+  config: {
+    debug: false,
+    version: '2.0.0',
+    features: {
+      tooltips: true,
+      mobileNav: true,
+      lazyLoading: true,
+      performanceMonitoring: true
+    }
+  },
+
+  // Application state
+  state: {
+    initialized: false,
+    mobileNavOpen: false,
+    currentTheme: 'dark'
+  },
+
+  // Component registry
+  components: new Map(),
+
+  /**
+   * Initialize the CodeXam application
+   * @param {Object} customConfig - Custom configuration options
+   */
+  init(customConfig = {}) {
+    if (this.state.initialized) {
+      console.warn('CodeXam application already initialized');
+      return;
+    }
+
+    // Merge custom configuration
+    this.config = { ...this.config, ...customConfig };
+
+    // Log initialization
+    if (this.config.debug) {
+      console.log(`🚀 CodeXam v${this.config.version} initializing...`);
+    }
+
+    // Initialize core components
+    this.initializeCore();
+
+    // Mark as initialized
+    this.state.initialized = true;
+
+    if (this.config.debug) {
+      console.log('✅ CodeXam application initialized successfully');
+    }
+  },
+
+  /**
+   * Initialize core application components
+   */
+  initializeCore() {
+    // Initialize Bootstrap components
+    if (this.config.features.tooltips) {
+      this.initializeTooltips();
+    }
+
+    // Initialize mobile navigation
+    if (this.config.features.mobileNav) {
+      this.initializeMobileNavigation();
+    }
+
+    // Initialize lazy loading
+    if (this.config.features.lazyLoading) {
+      this.initializeLazyLoading();
+    }
+
+    // Initialize performance monitoring
+    if (this.config.features.performanceMonitoring) {
+      this.initializePerformanceMonitoring();
+    }
+
+    // Initialize accessibility features
+    this.initializeAccessibility();
+
+    // Initialize error handling
+    this.initializeErrorHandling();
+  },
+
+  /**
+   * Initialize Bootstrap tooltips with error handling
+   */
+  initializeTooltips() {
+    try {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+      
+      if (tooltipTriggerList.length === 0) return;
+
+      tooltipTriggerList.forEach(tooltipTriggerEl => {
+        new bootstrap.Tooltip(tooltipTriggerEl, {
+          boundary: 'viewport',
+          fallbackPlacements: ['top', 'right', 'bottom', 'left']
+        });
+      });
+
+      if (this.config.debug) {
+        console.log(`✅ Initialized ${tooltipTriggerList.length} tooltips`);
+      }
+    } catch (error) {
+      console.error('❌ Failed to initialize tooltips:', error);
+    }
+  },
+
+  /**
+   * Initialize mobile navigation with enhanced functionality
+   */
+  initializeMobileNavigation() {
+    const navToggle = document.querySelector('.navbar-toggle');
+    const navMenu = document.querySelector('.navbar-nav');
+    
+    if (!navToggle || !navMenu) return;
+
+    // Toggle navigation
+    navToggle.addEventListener('click', (e) => {
+      e.preventDefault();
+      this.toggleMobileNav();
+    });
+
+    // Close navigation when clicking outside
+    document.addEventListener('click', (e) => {
+      if (this.state.mobileNavOpen && 
+          !navToggle.contains(e.target) && 
+          !navMenu.contains(e.target)) {
+        this.closeMobileNav();
+      }
+    });
+
+    // Handle escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && this.state.mobileNavOpen) {
+        this.closeMobileNav();
+        navToggle.focus();
+      }
+    });
+
+    if (this.config.debug) {
+      console.log('✅ Mobile navigation initialized');
+    }
+  },
+
+  /**
+   * Toggle mobile navigation state
+   */
+  toggleMobileNav() {
+    if (this.state.mobileNavOpen) {
+      this.closeMobileNav();
+    } else {
+      this.openMobileNav();
+    }
+  },
+
+  /**
+   * Open mobile navigation
+   */
+  openMobileNav() {
+    const navToggle = document.querySelector('.navbar-toggle');
+    const navMenu = document.querySelector('.navbar-nav');
+    
+    if (!navToggle || !navMenu) return;
+
+    navToggle.classList.add('active');
+    navToggle.setAttribute('aria-expanded', 'true');
+    navMenu.classList.add('show');
+    
+    this.state.mobileNavOpen = true;
+
+    // Trap focus within navigation
+    this.trapFocus(navMenu);
+  },
+
+  /**
+   * Close mobile navigation
+   */
+  closeMobileNav() {
+    const navToggle = document.querySelector('.navbar-toggle');
+    const navMenu = document.querySelector('.navbar-nav');
+    
+    if (!navToggle || !navMenu) return;
+
+    navToggle.classList.remove('active');
+    navToggle.setAttribute('aria-expanded', 'false');
+    navMenu.classList.remove('show');
+    
+    this.state.mobileNavOpen = false;
+  },
+
+  /**
+   * Initialize lazy loading for images and content
+   */
+  initializeLazyLoading() {
+    if ('IntersectionObserver' in window) {
+      const lazyImages = document.querySelectorAll('img[data-src]');
+      
+      if (lazyImages.length === 0) return;
+
+      const imageObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const img = entry.target;
+            img.src = img.dataset.src;
+            img.classList.remove('lazy');
+            observer.unobserve(img);
+          }
+        });
+      });
+
+      lazyImages.forEach(img => imageObserver.observe(img));
+
+      if (this.config.debug) {
+        console.log(`✅ Lazy loading initialized for ${lazyImages.length} images`);
+      }
+    }
+  },
+
+  /**
+   * Initialize performance monitoring
+   */
+  initializePerformanceMonitoring() {
+    // Monitor page load performance
+    window.addEventListener('load', () => {
+      if ('performance' in window) {
+        const perfData = performance.getEntriesByType('navigation')[0];
+        
+        if (this.config.debug) {
+          console.log('📊 Page Performance:', {
+            loadTime: Math.round(perfData.loadEventEnd - perfData.fetchStart),
+            domContentLoaded: Math.round(perfData.domContentLoadedEventEnd - perfData.fetchStart),
+            firstPaint: this.getFirstPaint()
+          });
+        }
+      }
+    });
+  },
+
+  /**
+   * Get First Paint timing
+   */
+  getFirstPaint() {
+    const paintEntries = performance.getEntriesByType('paint');
+    const firstPaint = paintEntries.find(entry => entry.name === 'first-paint');
+    return firstPaint ? Math.round(firstPaint.startTime) : null;
+  },
+
+  /**
+   * Initialize accessibility features
+   */
+  initializeAccessibility() {
+    // Skip link functionality
+    const skipLink = document.querySelector('.skip-link');
+    if (skipLink) {
+      skipLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        const target = document.querySelector(skipLink.getAttribute('href'));
+        if (target) {
+          target.focus();
+          target.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    }
+
+    // Announce dynamic content changes to screen readers
+    this.createAriaLiveRegion();
+
+    if (this.config.debug) {
+      console.log('✅ Accessibility features initialized');
+    }
+  },
+
+  /**
+   * Create ARIA live region for announcements
+   */
+  createAriaLiveRegion() {
+    if (document.getElementById('aria-live-region')) return;
+
+    const liveRegion = document.createElement('div');
+    liveRegion.id = 'aria-live-region';
+    liveRegion.setAttribute('aria-live', 'polite');
+    liveRegion.setAttribute('aria-atomic', 'true');
+    liveRegion.className = 'visually-hidden';
+    document.body.appendChild(liveRegion);
+  },
+
+  /**
+   * Announce message to screen readers
+   * @param {string} message - Message to announce
+   */
+  announceToScreenReader(message) {
+    const liveRegion = document.getElementById('aria-live-region');
+    if (liveRegion) {
+      liveRegion.textContent = message;
+      setTimeout(() => {
+        liveRegion.textContent = '';
+      }, 1000);
+    }
+  },
+
+  /**
+   * Initialize global error handling
+   */
+  initializeErrorHandling() {
+    window.addEventListener('error', (e) => {
+      console.error('❌ JavaScript Error:', e.error);
+      
+      // Report to monitoring service in production
+      if (!this.config.debug) {
+        this.reportError(e.error);
+      }
+    });
+
+    window.addEventListener('unhandledrejection', (e) => {
+      console.error('❌ Unhandled Promise Rejection:', e.reason);
+      
+      // Report to monitoring service in production
+      if (!this.config.debug) {
+        this.reportError(e.reason);
+      }
+    });
+  },
+
+  /**
+   * Report error to monitoring service
+   * @param {Error} error - Error to report
+   */
+  reportError(error) {
+    // Implement error reporting logic here
+    // This could send to a service like Sentry, LogRocket, etc.
+    if (this.config.debug) {
+      console.log('📊 Error reported:', error);
+    }
+  },
+
+  /**
+   * Trap focus within an element
+   * @param {HTMLElement} element - Element to trap focus within
+   */
+  trapFocus(element) {
+    const focusableElements = element.querySelectorAll(
+      'a[href], button, textarea, input[type="text"], input[type="radio"], input[type="checkbox"], select'
+    );
+    
+    if (focusableElements.length === 0) return;
+
+    const firstFocusable = focusableElements[0];
+    const lastFocusable = focusableElements[focusableElements.length - 1];
+
+    element.addEventListener('keydown', (e) => {
+      if (e.key === 'Tab') {
+        if (e.shiftKey) {
+          if (document.activeElement === firstFocusable) {
+            lastFocusable.focus();
+            e.preventDefault();
+          }
+        } else {
+          if (document.activeElement === lastFocusable) {
+            firstFocusable.focus();
+            e.preventDefault();
+          }
+        }
+      }
+    });
+
+    firstFocusable.focus();
+  },
+
+  /**
+   * Utility function to debounce function calls
+   * @param {Function} func - Function to debounce
+   * @param {number} wait - Wait time in milliseconds
+   * @returns {Function} Debounced function
+   */
+  debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+      const later = () => {
+        clearTimeout(timeout);
+        func(...args);
+      };
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+    };
+  },
+
+  /**
+   * Utility function to throttle function calls
+   * @param {Function} func - Function to throttle
+   * @param {number} limit - Time limit in milliseconds
+   * @returns {Function} Throttled function
+   */
+  throttle(func, limit) {
+    let inThrottle;
+    return function executedFunction(...args) {
+      if (!inThrottle) {
+        func.apply(this, args);
+        inThrottle = true;
+        setTimeout(() => inThrottle = false, limit);
+      }
+    };
+  }
+};
 
 // Initialize application when DOM is ready
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('CodeXam application initialized');
-    
-    // Initialize Bootstrap tooltips
-    initializeTooltips();
-    
-    // Initialize any other components
-    initializeComponents();
+document.addEventListener('DOMContentLoaded', () => {
+  CodeXamApp.init({
+    debug: window.location.hostname === 'localhost'
+  });
 });
 
-/**
- * Initialize Bootstrap tooltips
- */
-function initializeTooltips() {
-    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-    const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl);
-    });
+// Export for use in other modules
+window.CodeXamApp = CodeXamApp;
+            navMenu.classList.toggle('show');
+            
+            // Update ARIA attributes for accessibility
+            const isExpanded = navMenu.classList.contains('show');
+            this.setAttribute('aria-expanded', isExpanded);
+        });
+        
+        // Close menu when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!navToggle.contains(event.target) && !navMenu.contains(event.target)) {
+                navToggle.classList.remove('active');
+                navMenu.classList.remove('show');
+                navToggle.setAttribute('aria-expanded', 'false');
+            }
+        });
+        
+        // Close menu when pressing Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && navMenu.classList.contains('show')) {
+                navToggle.classList.remove('active');
+                navMenu.classList.remove('show');
+                navToggle.setAttribute('aria-expanded', 'false');
+                navToggle.focus(); // Return focus to toggle button
+            }
+        });
+        
+        // Close menu when clicking on nav links (mobile)
+        const navLinks = navMenu.querySelectorAll('.nav-link');
+        navLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                if (window.innerWidth <= 768) {
+                    navToggle.classList.remove('active');
+                    navMenu.classList.remove('show');
+                    navToggle.setAttribute('aria-expanded', 'false');
+                }
+            });
+        });
+    }
 }
 
 /**
- * Initialize other components
- */
-function initializeComponents() {
-    // Add any component initialization here
-    console.log('Components initialized');
-}
-
-/**
- * Utility function to show alerts
+ * Utility function to show accessible alerts
  */
 function showAlert(message, type = 'info') {
-    const alertContainer = document.getElementById('alert-container');
+    // Create alert container if it doesn't exist
+    let alertContainer = document.getElementById('alert-container');
     if (!alertContainer) {
-        console.warn('Alert container not found');
-        return;
+        alertContainer = document.createElement('div');
+        alertContainer.id = 'alert-container';
+        alertContainer.className = 'alert-container';
+        alertContainer.setAttribute('aria-live', 'polite');
+        alertContainer.setAttribute('aria-atomic', 'true');
+        document.body.appendChild(alertContainer);
     }
     
     const alertDiv = document.createElement('div');
-    alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show animate-slide-up`;
     alertDiv.setAttribute('role', 'alert');
+    alertDiv.setAttribute('aria-live', 'assertive');
+    
+    // Add appropriate icon based on type
+    const icons = {
+        'success': '✅',
+        'error': '❌',
+        'warning': '⚠️',
+        'info': 'ℹ️'
+    };
+    
     alertDiv.innerHTML = `
-        ${message}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <div class="alert-content">
+            <span class="alert-icon" aria-hidden="true">${icons[type] || icons.info}</span>
+            <span class="alert-message">${message}</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close alert">
+                <span aria-hidden="true">×</span>
+            </button>
+        </div>
     `;
     
     alertContainer.appendChild(alertDiv);
     
+    // Focus management for screen readers
+    alertDiv.focus();
+    
     // Auto-dismiss after 5 seconds
     setTimeout(() => {
         if (alertDiv.parentNode) {
-            alertDiv.remove();
+            alertDiv.classList.add('fade-out');
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 300);
         }
     }, 5000);
+    
+    // Manual close functionality
+    const closeBtn = alertDiv.querySelector('.btn-close');
+    closeBtn.addEventListener('click', () => {
+        alertDiv.classList.add('fade-out');
+        setTimeout(() => {
+            alertDiv.remove();
+        }, 300);
+    });
 }
 
 /**
