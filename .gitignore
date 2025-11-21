@@ -152,21 +152,56 @@ public
 tmp/
 temp/
 
-# Debug and report files (should not be committed)
-BUG_CHECK_FINAL_REPORT.md
-BUG_CHECK_REPORT.md
-CURRENT_STATUS.md
-DATABASE_CONTROL_OPTIONS.md
-DATABASE_MANAGEMENT_GUIDE.md
-DATABASE_OPTIONS.md
-FIXES_AND_IMPROVEMENTS.md
-JAVASCRIPT_FIXES.md
-MCP-WORKING-GUIDE.md
-debug_modal.html
+# ============================================================================
+# CODEXAM-SPECIFIC IGNORES
+# ============================================================================
 
-# Test files that shouldn't be in production
+# Configuration files with sensitive data
+config.local.py
+local_settings.py
+
+# Temporary and generated files
+*_COMPLETION_REPORT.md
+*_IMPLEMENTATION_SUMMARY.md
+*_SUMMARY.md
+PHASE_*.md
+STAGE_*.md
+TASK_*.md
+health_report_*.json
+*_test_report_*.html
+debug_modal.html
+template_accessibility_validation.txt
+
+# Test files that shouldn't be in production (keep only in tests/ directory)
 test_*.py
-!tests/test_*.py  # Keep proper test files in tests/ directory
+!tests/test_*.py
+
+# Cache and optimization files
+static/optimized/
+static/minified/
+.asset-cache/
+.build-cache/
+
+# Report and analysis files
+accessibility_reports/
+cross_browser_reports/
+performance_reports/
+test_reports/
+
+# Backup and temporary database files
+database_backup_*.db
+*.db.bak
+*.sqlite.backup
+
+# Development utilities and scripts
+simple_*.py
+temp_*.py
+debug_*.py
+*_temp.py
+
+# MCP and IDE specific files
+.kiro/cache/
+.kiro/temp/
 
 # Editor directories and files
 .vscode/*

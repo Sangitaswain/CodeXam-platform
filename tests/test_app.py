@@ -1,21 +1,27 @@
 """
 Test cases for the main Flask application
+
+This module contains comprehensive tests for the main Flask application
+including configuration, routes, and template rendering functionality.
 """
 
-import pytest
 import json
+from typing import Any, Dict
+
+import pytest
+
 from app import create_app
 
 class TestApp:
     """Test suite for main application functionality."""
     
-    def test_app_creation(self):
+    def test_app_creation(self) -> None:
         """Test that the Flask app can be created successfully."""
         app = create_app(testing=True)
         assert app is not None
         assert app.config['TESTING'] is True
     
-    def test_app_config(self):
+    def test_app_config(self) -> None:
         """Test application configuration."""
         app = create_app(testing=True)
         
