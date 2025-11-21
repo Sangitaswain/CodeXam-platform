@@ -22,6 +22,13 @@
 - **pip** for dependency management
 - **SQLite** for local development database
 
+## System Monitoring & Testing
+- **psutil** - System and process monitoring utilities
+- **requests** - HTTP client for external API integration
+- **selenium** - Browser automation for UI testing (optional)
+- **beautifulsoup4** - HTML parsing for accessibility testing (optional)
+- **pytest** - Testing framework with coverage reporting
+
 ## Common Commands
 
 ### Development Setup
@@ -47,6 +54,12 @@ python -m pytest tests/test_judge.py
 
 # Run with coverage
 python -m pytest --cov=app tests/
+
+# Run UI tests (requires browser drivers)
+python -m pytest tests/test_ui.py
+
+# Run accessibility tests
+python -m pytest tests/test_accessibility.py
 ```
 
 ### Database Operations

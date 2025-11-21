@@ -10,10 +10,29 @@ CodeXam/
 ├── judge.py               # Code execution engine
 ├── config.py              # Application configuration
 ├── requirements.txt       # Python dependencies
-├── init_db.py            # Database initialization script
-├── seed_problems.py      # Sample problem data loader
-├── reset_db.py           # Database reset utility
 ├── database.db           # SQLite database file (gitignored)
+├── scripts/              # Utility scripts
+│   ├── init_db.py        # Database initialization script
+│   ├── seed_problems.py  # Sample problem data loader
+│   ├── reset_db.py       # Database reset utility
+│   ├── build_assets.py   # Asset optimization script
+│   ├── health_check.py   # System health validation
+│   └── run_*.py          # Testing and validation scripts
+├── config/               # Configuration files
+│   ├── device_testing_config.json    # Cross-browser testing config
+│   ├── accessibility_config.json     # Accessibility testing config
+│   └── .lighthouserc.json            # Lighthouse CI config
+├── docs/                 # Documentation
+│   ├── IMPLEMENTATION_GUIDE.md       # Complete development guide
+│   ├── CONFIGURATION_GUIDE.md        # Configuration management
+│   ├── DATABASE_MANAGEMENT_GUIDE.md  # Database operations
+│   ├── ACCESSIBILITY_TESTING.md      # Accessibility compliance
+│   ├── CROSS_BROWSER_TESTING.md      # Browser compatibility
+│   └── UI_*.md                       # UI documentation
+├── reports/              # Analysis and temporary reports
+│   ├── BUG_CHECK_FINAL_REPORT.md     # Bug analysis
+│   ├── DUPLICATE_FILES_ANALYSIS.md   # File cleanup analysis
+│   └── *_SUMMARY.md                  # Task completion summaries
 ├── templates/            # Jinja2 HTML templates
 │   ├── base.html         # Base template with navigation
 │   ├── index.html        # Landing page
@@ -28,7 +47,8 @@ CodeXam/
 │   │   └── style.css     # Custom styles
 │   ├── js/
 │   │   └── editor.js     # Code editor functionality
-│   └── img/              # Images and icons
+│   ├── img/              # Images and icons
+│   └── optimized/        # Minified and optimized assets
 ├── tests/                # Test suite
 │   ├── test_judge.py     # Judge engine tests
 │   ├── test_routes.py    # Web route tests
