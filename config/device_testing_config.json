@@ -1,0 +1,345 @@
+{
+  "testing_config": {
+    "base_url": "http://localhost:5000",
+    "timeout": 30,
+    "screenshot_on_failure": true,
+    "parallel_testing": false,
+    "retry_failed_tests": 1
+  },
+  
+  "browsers": {
+    "chrome": {
+      "enabled": true,
+      "driver_path": "auto",
+      "options": [
+        "--no-sandbox",
+        "--disable-dev-shm-usage",
+        "--disable-gpu",
+        "--disable-blink-features=AutomationControlled"
+      ],
+      "mobile_emulation": true,
+      "versions": ["latest"]
+    },
+    "firefox": {
+      "enabled": true,
+      "driver_path": "auto",
+      "options": [
+        "--no-sandbox"
+      ],
+      "mobile_emulation": false,
+      "versions": ["latest"]
+    },
+    "edge": {
+      "enabled": true,
+      "driver_path": "auto",
+      "options": [
+        "--no-sandbox",
+        "--disable-dev-shm-usage"
+      ],
+      "mobile_emulation": false,
+      "versions": ["latest"],
+      "platforms": ["windows"]
+    },
+    "safari": {
+      "enabled": false,
+      "driver_path": "auto",
+      "options": [],
+      "mobile_emulation": false,
+      "versions": ["latest"],
+      "platforms": ["macos"]
+    }
+  },
+  
+  "devices": {
+    "desktop": {
+      "large_desktop": {
+        "name": "Large Desktop",
+        "width": 1920,
+        "height": 1080,
+        "pixel_ratio": 1.0,
+        "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+        "touch_enabled": false,
+        "orientation": "landscape"
+      },
+      "standard_desktop": {
+        "name": "Standard Desktop",
+        "width": 1366,
+        "height": 768,
+        "pixel_ratio": 1.0,
+        "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+        "touch_enabled": false,
+        "orientation": "landscape"
+      },
+      "small_desktop": {
+        "name": "Small Desktop",
+        "width": 1024,
+        "height": 768,
+        "pixel_ratio": 1.0,
+        "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+        "touch_enabled": false,
+        "orientation": "landscape"
+      }
+    },
+    "tablet": {
+      "ipad_pro": {
+        "name": "iPad Pro",
+        "width": 1024,
+        "height": 1366,
+        "pixel_ratio": 2.0,
+        "user_agent": "Mozilla/5.0 (iPad; CPU OS 14_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Mobile/15E148 Safari/604.1",
+        "touch_enabled": true,
+        "orientation": "portrait"
+      },
+      "ipad": {
+        "name": "iPad",
+        "width": 768,
+        "height": 1024,
+        "pixel_ratio": 2.0,
+        "user_agent": "Mozilla/5.0 (iPad; CPU OS 14_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Mobile/15E148 Safari/604.1",
+        "touch_enabled": true,
+        "orientation": "portrait"
+      },
+      "android_tablet": {
+        "name": "Android Tablet",
+        "width": 800,
+        "height": 1280,
+        "pixel_ratio": 1.5,
+        "user_agent": "Mozilla/5.0 (Linux; Android 9; SM-T820) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+        "touch_enabled": true,
+        "orientation": "portrait"
+      }
+    },
+    "mobile": {
+      "iphone_12_pro": {
+        "name": "iPhone 12 Pro",
+        "width": 390,
+        "height": 844,
+        "pixel_ratio": 3.0,
+        "user_agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Mobile/15E148 Safari/604.1",
+        "touch_enabled": true,
+        "orientation": "portrait"
+      },
+      "iphone_se": {
+        "name": "iPhone SE",
+        "width": 375,
+        "height": 667,
+        "pixel_ratio": 2.0,
+        "user_agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Mobile/15E148 Safari/604.1",
+        "touch_enabled": true,
+        "orientation": "portrait"
+      },
+      "android_pixel": {
+        "name": "Google Pixel 5",
+        "width": 393,
+        "height": 851,
+        "pixel_ratio": 2.75,
+        "user_agent": "Mozilla/5.0 (Linux; Android 11; Pixel 5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Mobile Safari/537.36",
+        "touch_enabled": true,
+        "orientation": "portrait"
+      },
+      "android_samsung": {
+        "name": "Samsung Galaxy S21",
+        "width": 384,
+        "height": 854,
+        "pixel_ratio": 2.75,
+        "user_agent": "Mozilla/5.0 (Linux; Android 11; SM-G991B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Mobile Safari/537.36",
+        "touch_enabled": true,
+        "orientation": "portrait"
+      }
+    }
+  },
+  
+  "test_scenarios": {
+    "page_load": {
+      "enabled": true,
+      "timeout": 30,
+      "check_console_errors": true,
+      "check_network_errors": true,
+      "measure_performance": true
+    },
+    "responsive_layout": {
+      "enabled": true,
+      "check_horizontal_scroll": true,
+      "check_viewport_meta": true,
+      "check_touch_targets": true,
+      "min_touch_target_size": 44
+    },
+    "navigation": {
+      "enabled": true,
+      "test_menu_toggle": true,
+      "test_keyboard_navigation": true,
+      "test_focus_management": true
+    },
+    "forms": {
+      "enabled": true,
+      "test_input_focus": true,
+      "test_validation": true,
+      "test_submission": false,
+      "test_error_display": true
+    },
+    "interactive_elements": {
+      "enabled": true,
+      "test_buttons": true,
+      "test_links": true,
+      "test_modals": true,
+      "test_dropdowns": true
+    },
+    "content_rendering": {
+      "enabled": true,
+      "test_fonts": true,
+      "test_images": true,
+      "test_css_loading": true,
+      "test_javascript": true
+    },
+    "performance": {
+      "enabled": true,
+      "max_load_time": 5.0,
+      "check_resource_loading": true,
+      "check_memory_usage": false
+    }
+  },
+  
+  "responsive_breakpoints": {
+    "xs": {
+      "min_width": 0,
+      "max_width": 575,
+      "description": "Extra small devices (phones)"
+    },
+    "sm": {
+      "min_width": 576,
+      "max_width": 767,
+      "description": "Small devices (landscape phones)"
+    },
+    "md": {
+      "min_width": 768,
+      "max_width": 991,
+      "description": "Medium devices (tablets)"
+    },
+    "lg": {
+      "min_width": 992,
+      "max_width": 1199,
+      "description": "Large devices (desktops)"
+    },
+    "xl": {
+      "min_width": 1200,
+      "max_width": 1399,
+      "description": "Extra large devices (large desktops)"
+    },
+    "xxl": {
+      "min_width": 1400,
+      "max_width": 9999,
+      "description": "Extra extra large devices (larger desktops)"
+    }
+  },
+  
+  "pages_to_test": [
+    {
+      "path": "/",
+      "name": "Homepage",
+      "priority": "high",
+      "critical_elements": [
+        ".hero-section",
+        ".stats-section",
+        ".features-section",
+        "nav",
+        "footer"
+      ],
+      "responsive_critical": true
+    },
+    {
+      "path": "/problems",
+      "name": "Problems List",
+      "priority": "high",
+      "critical_elements": [
+        ".problems-grid",
+        ".filter-section",
+        ".problem-card",
+        "nav"
+      ],
+      "responsive_critical": true
+    },
+    {
+      "path": "/problem/1",
+      "name": "Problem Detail",
+      "priority": "critical",
+      "critical_elements": [
+        ".problem-workspace",
+        ".code-editor",
+        ".problem-description",
+        "#submit-code"
+      ],
+      "responsive_critical": true,
+      "mobile_specific_tests": [
+        "code_editor_usability",
+        "split_pane_mobile"
+      ]
+    },
+    {
+      "path": "/submissions",
+      "name": "Submissions History",
+      "priority": "medium",
+      "critical_elements": [
+        ".submissions-table",
+        ".filter-section",
+        ".stats-overview"
+      ],
+      "responsive_critical": true
+    },
+    {
+      "path": "/leaderboard",
+      "name": "Leaderboard",
+      "priority": "medium",
+      "critical_elements": [
+        ".leaderboard-table",
+        ".podium-section",
+        ".user-stats"
+      ],
+      "responsive_critical": false
+    }
+  ],
+  
+  "browser_specific_tests": {
+    "chrome": {
+      "test_mobile_emulation": true,
+      "test_touch_events": true,
+      "test_device_orientation": true
+    },
+    "firefox": {
+      "test_css_grid": true,
+      "test_flexbox": true,
+      "test_custom_properties": true
+    },
+    "edge": {
+      "test_legacy_compatibility": false,
+      "test_modern_features": true
+    },
+    "safari": {
+      "test_webkit_features": true,
+      "test_ios_specific": true
+    }
+  },
+  
+  "reporting": {
+    "formats": ["html", "json", "junit"],
+    "include_screenshots": true,
+    "screenshot_on_failure": true,
+    "screenshot_on_success": false,
+    "generate_comparison_report": true,
+    "output_directory": "./cross_browser_reports"
+  },
+  
+  "thresholds": {
+    "max_failed_tests": 5,
+    "min_success_rate": 90.0,
+    "max_load_time": 5.0,
+    "max_console_errors": 0,
+    "min_accessibility_score": 90
+  },
+  
+  "ci_integration": {
+    "fail_on_threshold_breach": true,
+    "generate_pr_comment": true,
+    "upload_artifacts": true,
+    "notify_on_failure": false
+  }
+}

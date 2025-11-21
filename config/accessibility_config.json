@@ -1,0 +1,250 @@
+{
+  "testing_config": {
+    "base_url": "http://localhost:5000",
+    "timeout": 30,
+    "implicit_wait": 10,
+    "page_load_timeout": 30,
+    "headless": true,
+    "window_size": {
+      "width": 1920,
+      "height": 1080
+    }
+  },
+  
+  "pages_to_test": [
+    {
+      "path": "/",
+      "name": "Homepage",
+      "description": "Landing page with hero section, statistics, and features",
+      "priority": "high",
+      "expected_elements": [
+        "main",
+        "nav",
+        "header",
+        "footer",
+        "h1"
+      ]
+    },
+    {
+      "path": "/problems",
+      "name": "Problems List",
+      "description": "List of coding problems with filtering and search",
+      "priority": "high",
+      "expected_elements": [
+        "main",
+        "nav",
+        "h1",
+        "form",
+        "button"
+      ]
+    },
+    {
+      "path": "/problem/1",
+      "name": "Problem Detail",
+      "description": "Individual problem page with code editor",
+      "priority": "critical",
+      "expected_elements": [
+        "main",
+        "nav",
+        "h1",
+        "textarea",
+        "button",
+        "form"
+      ]
+    },
+    {
+      "path": "/submissions",
+      "name": "Submissions History",
+      "description": "User's submission history and results",
+      "priority": "medium",
+      "expected_elements": [
+        "main",
+        "nav",
+        "h1",
+        "table"
+      ]
+    },
+    {
+      "path": "/leaderboard",
+      "name": "Leaderboard",
+      "description": "User rankings and statistics",
+      "priority": "medium",
+      "expected_elements": [
+        "main",
+        "nav",
+        "h1",
+        "table"
+      ]
+    }
+  ],
+  
+  "wcag_criteria": {
+    "level": "AA",
+    "version": "2.1",
+    "color_contrast": {
+      "normal_text": 4.5,
+      "large_text": 3.0,
+      "non_text": 3.0
+    },
+    "focus_indicators": {
+      "minimum_contrast": 3.0,
+      "minimum_size": "2px"
+    },
+    "touch_targets": {
+      "minimum_size": 44
+    }
+  },
+  
+  "test_categories": {
+    "color_contrast": {
+      "enabled": true,
+      "severity": "major",
+      "description": "Test color contrast ratios for text and UI elements"
+    },
+    "keyboard_navigation": {
+      "enabled": true,
+      "severity": "critical",
+      "description": "Test keyboard accessibility and focus management"
+    },
+    "aria_labels": {
+      "enabled": true,
+      "severity": "major",
+      "description": "Test ARIA labels and semantic HTML structure"
+    },
+    "screen_reader": {
+      "enabled": true,
+      "severity": "major",
+      "description": "Test screen reader compatibility features"
+    },
+    "structure": {
+      "enabled": true,
+      "severity": "major",
+      "description": "Test HTML structure and document outline"
+    },
+    "forms": {
+      "enabled": true,
+      "severity": "critical",
+      "description": "Test form accessibility and validation"
+    },
+    "images": {
+      "enabled": true,
+      "severity": "major",
+      "description": "Test image alternative text and descriptions"
+    },
+    "responsive": {
+      "enabled": true,
+      "severity": "minor",
+      "description": "Test responsive design and mobile accessibility"
+    }
+  },
+  
+  "browser_config": {
+    "chrome": {
+      "enabled": true,
+      "options": [
+        "--no-sandbox",
+        "--disable-dev-shm-usage",
+        "--disable-gpu",
+        "--force-renderer-accessibility",
+        "--enable-accessibility-logging"
+      ]
+    },
+    "firefox": {
+      "enabled": false,
+      "options": [
+        "--headless"
+      ]
+    }
+  },
+  
+  "reporting": {
+    "formats": ["html", "json", "text"],
+    "output_directory": "./accessibility_reports",
+    "include_screenshots": true,
+    "max_issues_per_category": 50,
+    "severity_levels": {
+      "critical": {
+        "color": "#e74c3c",
+        "description": "Complete barriers to access, WCAG failures"
+      },
+      "major": {
+        "color": "#f39c12", 
+        "description": "Significant usability problems"
+      },
+      "minor": {
+        "color": "#3498db",
+        "description": "Enhancement opportunities"
+      }
+    }
+  },
+  
+  "thresholds": {
+    "max_critical_issues": 0,
+    "max_major_issues": 0,
+    "max_minor_issues": 10,
+    "min_contrast_ratio": 4.5,
+    "max_page_load_time": 5.0
+  },
+  
+  "exclusions": {
+    "elements": [
+      ".sr-only",
+      "[aria-hidden='true']",
+      ".visually-hidden"
+    ],
+    "pages": [],
+    "tests": []
+  },
+  
+  "custom_selectors": {
+    "interactive_elements": "a, button, input, textarea, select, [tabindex]:not([tabindex='-1'])",
+    "headings": "h1, h2, h3, h4, h5, h6",
+    "landmarks": "main, nav, header, footer, aside, section[aria-label], [role]",
+    "form_controls": "input, textarea, select",
+    "images": "img, svg, [role='img']"
+  },
+  
+  "screen_reader_testing": {
+    "enabled": false,
+    "tools": {
+      "nvda": {
+        "enabled": false,
+        "path": "C:\\Program Files (x86)\\NVDA\\nvda.exe"
+      },
+      "jaws": {
+        "enabled": false,
+        "path": "C:\\Program Files\\Freedom Scientific\\JAWS\\jaws.exe"
+      },
+      "voiceover": {
+        "enabled": false,
+        "platform": "macos"
+      }
+    }
+  },
+  
+  "performance": {
+    "parallel_testing": true,
+    "max_workers": 4,
+    "retry_failed_tests": 2,
+    "test_timeout": 60
+  },
+  
+  "integration": {
+    "ci_cd": {
+      "fail_on_critical": true,
+      "fail_on_major": true,
+      "fail_on_minor": false
+    },
+    "slack_notifications": {
+      "enabled": false,
+      "webhook_url": "",
+      "channel": "#accessibility"
+    },
+    "jira_integration": {
+      "enabled": false,
+      "server": "",
+      "project_key": "",
+      "issue_type": "Bug"
+    }
+  }
+}
