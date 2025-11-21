@@ -30,6 +30,25 @@ A cutting-edge web-based coding challenge platform with a sleek dark hacker them
 - pip (Python package manager)
 - SQLite (included with Python)
 
+### Core Dependencies
+- **Flask 2.3.3**: Web framework for the application
+- **Jinja2 3.1.2**: Template engine for HTML rendering
+- **psutil 5.9.6**: System monitoring and performance tracking
+- **requests 2.31.0**: HTTP client for external API integration
+
+### Optional Dependencies
+- **pytest 7.4.2**: Testing framework (development)
+- **selenium 4.15.2**: Browser automation for UI testing (optional)
+- **beautifulsoup4 4.12.2**: HTML parsing for accessibility testing (optional)
+
+### Production Dependencies
+The `requirements.txt` file is now organized with clear sections and comments:
+- **Core Flask Application**: Essential web framework components
+- **System Monitoring**: Performance tracking and resource monitoring  
+- **Testing Framework**: Development and CI/CD testing tools
+- **Optional Components**: Browser automation and accessibility testing
+- **Production Notes**: Guidance for production deployment setup
+
 ## 🔧 Installation & Setup
 
 ### 1. Clone the Repository
@@ -49,12 +68,37 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### 4. Initialize Database
+**Note**: The requirements file is now organized with clear sections and comments:
+- **Core Flask Application**: Essential web framework components
+- **System Monitoring**: Performance tracking and resource monitoring  
+- **Testing Framework**: Development and CI/CD testing tools
+- **Optional Components**: Browser automation and accessibility testing
+- **Production Notes**: Guidance for production deployment setup
+
+For production deployment, consider additional packages like:
 ```bash
-python init_db.py
+# Production WSGI server
+pip install gunicorn==21.2.0
+
+# PostgreSQL support
+pip install psycopg2-binary==2.9.7
+
+# Redis for caching
+pip install redis==4.6.0
 ```
 
-### 5. Run the Application
+### 4. Configure Environment
+```bash
+cp .env.example .env
+# Edit .env with your configuration
+```
+
+### 5. Initialize Database
+```bash
+python scripts/init_db.py
+```
+
+### 6. Run the Application
 ```bash
 python app.py
 ```
@@ -72,7 +116,7 @@ cd CodeXam
 pip install -r requirements.txt
 
 # Initialize with sample data
-python init_db.py
+python scripts/init_db.py
 
 # Run the app
 python app.py
@@ -92,20 +136,48 @@ The platform uses SQLite with the following main tables:
 
 ```bash
 # Initialize database
-python init_db.py
+python scripts/init_db.py
 
 # Reset database (development only)
-python reset_db.py
+python scripts/reset_db.py
 
 # View database statistics
-python init_db.py --stats
+python scripts/init_db.py --stats
 ```
 
 ## 🧪 Testing
 
+### Unit Testing
+Run the comprehensive test suite:
+```bash
+# Run all tests
+python -m pytest tests/
+
+# Run with coverage reporting
+python -m pytest --cov=app tests/
+
+# Run specific test files
+python -m pytest tests/test_judge.py
+python -m pytest tests/test_routes.py
+```
+
+### Database Testing
 Run the database schema tests:
 ```bash
 python test_database_schema.py
+```
+
+### UI Testing (Optional)
+For browser-based UI testing with Selenium:
+```bash
+# Install browser drivers first (ChromeDriver, GeckoDriver)
+python -m pytest tests/test_ui.py
+```
+
+### Accessibility Testing
+Test accessibility compliance:
+```bash
+python -m pytest tests/test_accessibility.py
 ```
 
 ## 📁 Project Structure
@@ -115,8 +187,10 @@ CodeXam/
 ├── app.py                 # Main Flask application
 ├── config.py              # Application configuration
 ├── database.py            # Database connection utilities
-├── init_db.py            # Database initialization
-├── reset_db.py           # Database reset utility
+├── scripts/               # Utility scripts
+│   ├── init_db.py        # Database initialization
+│   ├── reset_db.py       # Database reset utility
+│   └── seed_problems.py  # Sample problem data loader
 ├── test_database_schema.py # Database tests
 ├── requirements.txt       # Python dependencies
 ├── templates/            # HTML templates (to be created)
@@ -181,6 +255,8 @@ Elite Arena systems operational and bug-free:
 ✅ Performance: Optimized CSS and animations (OPTIMIZED)
 ✅ Bug Fixes: All missing routes and files resolved (NEW)
 ✅ Security: Sandboxed execution with validation (ACTIVE)
+✅ Monitoring: System info and performance tracking (NEW)
+✅ Testing: Comprehensive test suite with UI automation (ENHANCED)
 ```
 
 ## 🎯 Elite Roadmap
@@ -234,9 +310,13 @@ For questions, issues, or contributions, please:
 
 ## 🔗 Links
 
+- [Configuration Guide](CONFIGURATION_GUIDE.md) - Environment setup and dependency management
+- [Implementation Guide](IMPLEMENTATION_GUIDE.md) - Comprehensive development and implementation details
 - [Project Specifications](.kiro/specs/codexam-platform/)
 - [Development Guidelines](.kiro/steering/)
-- [Database Schema Documentation](init_db.py)
+- [Database Schema Documentation](scripts/init_db.py)
+- [Deployment Guide](DEPLOYMENT.md) - Complete deployment instructions
+- [Style Guide](STYLE_GUIDE.md) - Design system and coding standards
 
 ---
 
