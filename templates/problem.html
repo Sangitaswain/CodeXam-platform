@@ -1491,6 +1491,7 @@
             formData.append('problem_id', problemId);
             formData.append('code', code);
             formData.append('language', language);
+            formData.append('csrf_token', '{{ csrf_token }}');
 
             fetch('/submit', {
                 method: 'POST',

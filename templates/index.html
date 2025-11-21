@@ -42,7 +42,7 @@ Join the elite coding arena.{% endblock %}
                     <!-- CTA Buttons -->
                     <div class="hero-actions">
                         <a href="{{ url_for('problems_list') }}" class="btn-cyber-primary me-3">
-                            <span>Initialize_Challenge()</span>
+                            <span>Get Started - Initialize_Challenge()</span>
                             <span class="ms-2">→</span>
                         </a>
                         <button class="btn-cyber-secondary" onclick="showPreview()">
@@ -297,6 +297,47 @@ Join the elite coding arena.{% endblock %}
                     </div>
 
                     <!-- Terminal Interface -->
+                    <div class="terminal-window">
+                        <div class="terminal-header">
+                            <div class="terminal-controls">
+                                <span class="control-dot red"></span>
+                                <span class="control-dot yellow"></span>
+                                <span class="control-dot green"></span>
+                            </div>
+                            <div class="terminal-title">elite@codexam:~</div>
+                        </div>
+                        
+                        <div class="terminal-body">
+                            <div class="terminal-line">
+                                <span class="prompt">elite@codexam:~$</span>
+                                <span class="command">./check_system_status.sh</span>
+                            </div>
+                            <div class="terminal-line output">
+                                <span class="output-text">Scanning elite coding arena...</span>
+                            </div>
+                            <div class="terminal-line output">
+                                <span class="output-success">✓ Judge engine: ONLINE</span>
+                            </div>
+                            <div class="terminal-line output">
+                                <span class="output-success">✓ Problem database: READY</span>
+                            </div>
+                            <div class="terminal-line output">
+                                <span class="output-info">→ {{ stats.total_problems or '6' }} challenges loaded</span>
+                            </div>
+                            <div class="terminal-line output">
+                                <span class="output-info">→ {{ stats.total_users or '6' }} elite coders active</span>
+                            </div>
+                            <div class="terminal-line current">
+                                <span class="prompt">elite@codexam:~$</span>
+                                <span class="command typing">initialize_arena()</span>
+                                <span class="cursor">|</span>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <!-- Terminal Interface -->
                     <div class="terminal-interface">
                         <div class="terminal-header">
                             <div class="terminal-controls">
@@ -346,16 +387,17 @@ Join the elite coding arena.{% endblock %}
                             </div>
                         </a>
 
-                        <button class="elite-btn secondary" onclick="SystemInfoModal.show()" <div class="btn-content">
-                            <svg class="btn-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="2">
-                                <circle cx="12" cy="12" r="10" />
-                                <line x1="12" y1="16" x2="12" y2="12" />
-                                <line x1="12" y1="8" x2="12.01" y2="8" />
-                            </svg>
-                            <span class="btn-text">SYSTEM INFO</span>
-                    </div>
-                    </button>
+                        <button class="elite-btn secondary" onclick="showSystemInfoModal();">
+                            <div class="btn-content">
+                                <svg class="btn-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10" />
+                                    <line x1="12" y1="16" x2="12" y2="12" />
+                                    <line x1="12" y1="8" x2="12.01" y2="8" />
+                                </svg>
+                                <span class="btn-text">SYSTEM INFO</span>
+                            </div>
+                        </button>
                 </div>
 
                 <!-- Status Bar -->
@@ -610,6 +652,208 @@ Join the elite coding arena.{% endblock %}
             radial-gradient(circle at 50% 50%, rgba(0, 255, 136, 0.05) 0%, transparent 70%);
     }
 
+    /* Terminal Interface */
+    .terminal-window {
+        background: rgba(0, 0, 0, 0.8);
+        border: 1px solid rgba(0, 255, 136, 0.3);
+        border-radius: 8px;
+        margin: 0.75rem auto;
+        max-width: 700px;
+        overflow: hidden;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(10px);
+    }
+
+    .terminal-header {
+        background: rgba(0, 255, 136, 0.05);
+        border-bottom: 1px solid rgba(0, 255, 136, 0.2);
+        padding: 0.75rem 1rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .terminal-controls {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .control-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        display: block;
+    }
+
+    .control-dot.red {
+        background: #ff5f57;
+    }
+
+    .control-dot.yellow {
+        background: #ffbd2e;
+    }
+
+    .control-dot.green {
+        background: #28ca42;
+    }
+
+    .terminal-title {
+        font-family: var(--font-mono);
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        font-weight: 500;
+    }
+
+    .terminal-body {
+        padding: 0.75rem 1.5rem;
+        font-family: var(--font-mono);
+        font-size: 0.875rem;
+        line-height: 1.4;
+    }
+
+    .terminal-line {
+        margin-bottom: 0.2rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .terminal-line.current {
+        margin-top: 0.3rem;
+    }
+
+    .prompt {
+        color: var(--accent-primary);
+        font-weight: 600;
+        flex-shrink: 0;
+    }
+
+    .command {
+        color: var(--text-primary);
+        font-weight: 500;
+    }
+
+    .command.typing {
+        animation: typing-effect 3s steps(20) infinite;
+        border-right: 2px solid var(--accent-primary);
+        padding-right: 2px;
+    }
+
+    .cursor {
+        color: var(--accent-primary);
+        animation: cursor-blink 1s infinite;
+        font-weight: bold;
+    }
+
+    .terminal-line.output {
+        padding-left: 2rem;
+    }
+
+    .output-text {
+        color: var(--text-secondary);
+        animation: fade-in 0.5s ease-in;
+    }
+
+    .output-success {
+        color: var(--accent-primary);
+        animation: fade-in 0.5s ease-in 0.5s both;
+    }
+
+    .output-info {
+        color: #3498db;
+        animation: fade-in 0.5s ease-in 1s both;
+    }
+
+    .output-warning {
+        color: #f39c12;
+    }
+
+    .output-error {
+        color: #e74c3c;
+    }
+
+    /* Terminal Animations */
+    @keyframes typing-effect {
+        0%, 50% {
+            border-right-color: var(--accent-primary);
+        }
+        51%, 100% {
+            border-right-color: transparent;
+        }
+    }
+
+    @keyframes cursor-blink {
+        0%, 50% {
+            opacity: 1;
+        }
+        51%, 100% {
+            opacity: 0;
+        }
+    }
+
+    @keyframes fade-in {
+        from {
+            opacity: 0;
+            transform: translateX(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    /* Terminal Glow Effect */
+    .terminal-window::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(
+            45deg,
+            transparent,
+            rgba(0, 255, 136, 0.02),
+            transparent
+        );
+        pointer-events: none;
+        animation: terminal-glow 4s ease-in-out infinite;
+    }
+
+    @keyframes terminal-glow {
+        0%, 100% {
+            opacity: 0.5;
+        }
+        50% {
+            opacity: 1;
+        }
+    }
+
+    /* Responsive Terminal */
+    @media (max-width: 768px) {
+        .terminal-window {
+            margin: 2rem 1rem;
+        }
+
+        .terminal-body {
+            padding: 1rem;
+            font-size: 0.8rem;
+        }
+
+        .terminal-line {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.25rem;
+        }
+
+        .terminal-line.output {
+            padding-left: 0;
+            margin-left: 1rem;
+        }
+    }
+
+
+
     .cta-content {
         padding: 3rem 2rem;
         text-align: center;
@@ -756,6 +1000,8 @@ Join the elite coding arena.{% endblock %}
                 }, 800);
             }
         }
+
+    });
     });
 </script>
 {% endblock %}
