@@ -1,0 +1,534 @@
+{% extends "base.html" %}
+
+{% block title %}View Submissions - Admin Panel{% endblock %}
+
+{% block body_class %}admin-view-submissions{% endblock %}
+
+{% block content %}
+<!-- Admin Header -->
+<section class="admin-header py-4">
+    <div class="container">
+        <div class="header-content d-flex justify-content-between align-items-center">
+            <div class="header-title-section">
+                <h1 class="section-title mb-2">
+                    <span class="admin-icon">📊</span>
+                    View All <span class="text-accent">Submissions</span>
+                </h1>
+                <p class="section-subtitle text-secondary mb-0">
+                    Monitor user submissions and platform activity.
+                </p>
+            </div>
+            <a href="{{ url_for('admin_panel') }}" class="btn btn-outline-accent">
+                ← Back to Admin Panel
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Submissions View -->
+<section class="submissions-view py-5">
+    <div class="container">
+        {% if submissions.submissions %}
+        <!-- Submissions Stats -->
+        <div class="stats-overview mb-4">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value">{{ submissions.total_count }}</div>
+                    <div class="stat-label">Total Submissions</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">{{ submissions.submissions|selectattr('result', 'equalto', 'PASS')|list|length }}</div>
+                    <div class="stat-label">Successful</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">{{ submissions.submissions|selectattr('result', 'equalto', 'FAIL')|list|length }}</div>
+                    <div class="stat-label">Failed</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">{{ submissions.submissions|selectattr('result', 'equalto', 'ERROR')|list|length }}</div>
+                    <div class="stat-label">Errors</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Submissions Table -->
+        <div class="submissions-table-container">
+            <div class="table-header">
+                <h2 class="table-title">
+                    <span class="table-icon">📝</span>
+                    All Submissions
+                </h2>
+            </div>
+
+            <div class="table-responsive">
+                <table class="submissions-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>User</th>
+                            <th>Problem</th>
+                            <th>Language</th>
+                            <th>Result</th>
+                            <th>Execution Time</th>
+                            <th>Memory Usage</th>
+                            <th>Submitted</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for submission in submissions.submissions %}
+                        <tr class="submission-row">
+                            <td class="submission-id">#{{ submission.id }}</td>
+                            <td class="submission-user">
+                                <span class="user-name">{{ submission.user_name }}</span>
+                            </td>
+                            <td class="submission-problem">
+                                <div class="problem-info">
+                                    <span class="problem-id">#{{ submission.problem_id }}</span>
+                                    <span class="problem-title">{{ submission.problem_title or 'Unknown Problem' }}</span>
+                                </div>
+                            </td>
+                            <td class="submission-language">
+                                <span class="language-tag">{{ submission.language }}</span>
+                            </td>
+                            <td class="submission-result">
+                                <span class="result-badge result-{{ submission.result.lower() }}">
+                                    {% if submission.result == 'PASS' %}✅ PASS
+                                    {% elif submission.result == 'FAIL' %}❌ FAIL
+                                    {% else %}⚠️ ERROR{% endif %}
+                                </span>
+                            </td>
+                            <td class="submission-time">
+                                {% if submission.execution_time %}
+                                <span class="metric-value">{{ "%.3f"|format(submission.execution_time) }}s</span>
+                                {% else %}
+                                <span class="metric-na">N/A</span>
+                                {% endif %}
+                            </td>
+                            <td class="submission-memory">
+                                {% if submission.memory_usage %}
+                                <span class="metric-value">{{ "%.1f"|format(submission.memory_usage) }}MB</span>
+                                {% else %}
+                                <span class="metric-na">N/A</span>
+                                {% endif %}
+                            </td>
+                            <td class="submission-date">
+                                <span class="date-value">{{ submission.submitted_at.strftime('%Y-%m-%d') }}</span>
+                                <span class="time-value">{{ submission.submitted_at.strftime('%H:%M:%S') }}</span>
+                            </td>
+                            <td class="submission-actions">
+                                <button class="action-btn view-btn" 
+                                        onclick="viewSubmission({{ submission.id }})" 
+                                        title="View Details">
+                                    👁️
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            {% if submissions.total_pages > 1 %}
+            <div class="pagination-container">
+                <div class="pagination">
+                    {% if submissions.has_prev %}
+                    <a href="{{ url_for('admin_view_submissions', page=submissions.page-1) }}" class="page-btn">
+                        ← Previous
+                    </a>
+                    {% endif %}
+                    
+                    {% for page_num in range(1, submissions.total_pages + 1) %}
+                        {% if page_num == submissions.page %}
+                        <span class="page-btn active">{{ page_num }}</span>
+                        {% elif page_num <= 3 or page_num > submissions.total_pages - 3 or (page_num >= submissions.page - 1 and page_num <= submissions.page + 1) %}
+                        <a href="{{ url_for('admin_view_submissions', page=page_num) }}" class="page-btn">{{ page_num }}</a>
+                        {% elif page_num == 4 and submissions.page > 6 %}
+                        <span class="page-btn">...</span>
+                        {% elif page_num == submissions.total_pages - 3 and submissions.page < submissions.total_pages - 5 %}
+                        <span class="page-btn">...</span>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if submissions.has_next %}
+                    <a href="{{ url_for('admin_view_submissions', page=submissions.page+1) }}" class="page-btn">
+                        Next →
+                    </a>
+                    {% endif %}
+                </div>
+                
+                <div class="pagination-info">
+                    Showing {{ (submissions.page-1) * submissions.per_page + 1 }} to 
+                    {{ submissions.page * submissions.per_page if submissions.page * submissions.per_page < submissions.total_count else submissions.total_count }} 
+                    of {{ submissions.total_count }} submissions
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        {% else %}
+        <!-- Empty State -->
+        <div class="empty-state">
+            <div class="empty-content">
+                <div class="empty-icon">📝</div>
+                <h3 class="empty-title">No Submissions Found</h3>
+                <p class="empty-description">
+                    No submissions have been made yet. Users will see their submissions here once they start solving problems.
+                </p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .admin-view-submissions {
+        background: var(--bg-primary);
+        min-height: 100vh;
+    }
+
+    .admin-header {
+        background: var(--bg-secondary);
+        border-bottom: 1px solid var(--border-primary);
+    }
+
+    .admin-icon {
+        font-size: 1.5rem;
+        margin-right: 0.5rem;
+    }
+
+    .stats-overview {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-primary);
+        border-radius: 0.75rem;
+        padding: 2rem;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 2rem;
+    }
+
+    .stat-item {
+        text-align: center;
+    }
+
+    .stat-value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--accent-primary);
+        font-family: var(--font-mono);
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .submissions-table-container {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-primary);
+        border-radius: 0.75rem;
+        overflow: hidden;
+    }
+
+    .table-header {
+        padding: 1.5rem 2rem;
+        background: rgba(0, 255, 136, 0.05);
+        border-bottom: 1px solid var(--border-primary);
+    }
+
+    .table-title {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 0;
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .table-icon {
+        font-size: 1.5rem;
+    }
+
+    .table-responsive {
+        overflow-x: auto;
+    }
+
+    .submissions-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 1000px;
+    }
+
+    .submissions-table th {
+        background: var(--bg-primary);
+        color: var(--text-secondary);
+        font-weight: 600;
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        padding: 1rem;
+        text-align: left;
+        border-bottom: 1px solid var(--border-primary);
+        white-space: nowrap;
+    }
+
+    .submissions-table td {
+        padding: 1rem;
+        border-bottom: 1px solid var(--border-primary);
+        vertical-align: middle;
+    }
+
+    .submission-row:hover {
+        background: rgba(0, 255, 136, 0.02);
+    }
+
+    .submission-id {
+        font-family: var(--font-mono);
+        font-weight: 600;
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+    }
+
+    .user-name {
+        font-weight: 500;
+        color: var(--text-primary);
+    }
+
+    .problem-info {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .problem-id {
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+    }
+
+    .problem-title {
+        font-size: 0.875rem;
+        color: var(--text-primary);
+        font-weight: 500;
+    }
+
+    .language-tag {
+        padding: 0.25rem 0.75rem;
+        background: rgba(0, 255, 136, 0.1);
+        color: var(--accent-primary);
+        border-radius: 1rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    .result-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 1rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .result-pass {
+        background: rgba(40, 167, 69, 0.2);
+        color: #28a745;
+    }
+
+    .result-fail {
+        background: rgba(220, 53, 69, 0.2);
+        color: #dc3545;
+    }
+
+    .result-error {
+        background: rgba(253, 126, 20, 0.2);
+        color: #fd7e14;
+    }
+
+    .metric-value {
+        font-family: var(--font-mono);
+        font-weight: 600;
+        color: var(--text-primary);
+        font-size: 0.875rem;
+    }
+
+    .metric-na {
+        color: var(--text-muted);
+        font-style: italic;
+        font-size: 0.875rem;
+    }
+
+    .date-value {
+        display: block;
+        font-size: 0.875rem;
+        color: var(--text-primary);
+        font-weight: 500;
+    }
+
+    .time-value {
+        display: block;
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+        font-family: var(--font-mono);
+    }
+
+    .action-btn {
+        width: 2rem;
+        height: 2rem;
+        border: none;
+        border-radius: 0.25rem;
+        background: var(--bg-primary);
+        color: var(--text-secondary);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.875rem;
+        transition: all 0.3s ease;
+    }
+
+    .action-btn:hover {
+        background: var(--border-primary);
+        color: var(--accent-primary);
+        transform: translateY(-1px);
+    }
+
+    .pagination-container {
+        padding: 2rem;
+        border-top: 1px solid var(--border-primary);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .pagination {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+    }
+
+    .page-btn {
+        padding: 0.5rem 1rem;
+        border: 1px solid var(--border-primary);
+        border-radius: 0.25rem;
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        text-decoration: none;
+        font-size: 0.875rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .page-btn:hover {
+        background: var(--border-primary);
+        color: var(--accent-primary);
+    }
+
+    .page-btn.active {
+        background: var(--accent-primary);
+        color: var(--bg-primary);
+        border-color: var(--accent-primary);
+    }
+
+    .pagination-info {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+    }
+
+    .empty-content {
+        max-width: 400px;
+        margin: 0 auto;
+    }
+
+    .empty-icon {
+        font-size: 4rem;
+        margin-bottom: 1.5rem;
+        opacity: 0.5;
+    }
+
+    .empty-title {
+        margin-bottom: 1rem;
+        color: var(--text-primary);
+        font-size: 1.5rem;
+        font-weight: 600;
+    }
+
+    .empty-description {
+        margin-bottom: 2rem;
+        color: var(--text-secondary);
+        font-size: 1rem;
+    }
+
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        font-weight: 500;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        border: 1px solid transparent;
+    }
+
+    .btn-outline-accent {
+        background: transparent;
+        color: var(--accent-primary);
+        border-color: var(--accent-primary);
+    }
+
+    .btn-outline-accent:hover {
+        background: rgba(0, 255, 136, 0.1);
+    }
+
+    @media (max-width: 768px) {
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .submissions-table th,
+        .submissions-table td {
+            padding: 0.75rem 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .pagination-container {
+            flex-direction: column;
+            gap: 1rem;
+            text-align: center;
+        }
+
+        .pagination {
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function viewSubmission(submissionId) {
+        // TODO: Implement submission detail modal or page
+        alert(`Viewing submission #${submissionId} - Feature coming soon!`);
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,445 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Panel - CodeXam Elite Control{% endblock %}
+
+{% block body_class %}admin-panel{% endblock %}
+
+{% block content %}
+<!-- Admin Header -->
+<section class="admin-header py-5">
+    <div class="container">
+        <div class="header-content">
+            <div class="header-title-section">
+                <h1 class="section-title mb-3">
+                    <span class="admin-icon">⚙️</span>
+                    Admin <span class="text-accent">Control Panel</span>
+                </h1>
+                <p class="section-subtitle text-secondary mb-4">
+                    Elite system administration and problem management.
+                </p>
+            </div>
+
+            <div class="admin-status">
+                <div class="status-indicator">
+                    <span class="status-dot animate-pulse"></span>
+                    <span class="status-text">ADMIN_MODE_ACTIVE</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Admin Dashboard -->
+<section class="admin-dashboard py-4">
+    <div class="container">
+        <div class="row">
+            <!-- Quick Stats -->
+            <div class="col-12 mb-5">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">📚</div>
+                        <div class="stat-content">
+                            <div class="stat-value">{{ stats.total_problems }}</div>
+                            <div class="stat-label">Total Problems</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">📝</div>
+                        <div class="stat-content">
+                            <div class="stat-value">{{ stats.total_submissions }}</div>
+                            <div class="stat-label">Submissions</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-content">
+                            <div class="stat-value">{{ stats.total_users }}</div>
+                            <div class="stat-label">Active Users</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">⚡</div>
+                        <div class="stat-content">
+                            <div class="stat-value">{{ stats.success_rate }}%</div>
+                            <div class="stat-label">Success Rate</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Admin Actions -->
+            <div class="col-lg-8">
+                <div class="admin-card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <span class="card-icon">🛠️</span>
+                            Administration Actions
+                        </h2>
+                    </div>
+                    <div class="card-content">
+                        <div class="action-grid">
+                            <!-- Add Problem -->
+                            <a href="{{ url_for('admin_add_problem') }}" class="action-card">
+                                <div class="action-icon">➕</div>
+                                <div class="action-content">
+                                    <h3 class="action-title">Add New Problem</h3>
+                                    <p class="action-description">Create new coding challenges with test cases</p>
+                                </div>
+                                <div class="action-arrow">→</div>
+                            </a>
+
+                            <!-- Manage Problems -->
+                            <a href="{{ url_for('admin_manage_problems') }}" class="action-card">
+                                <div class="action-icon">📋</div>
+                                <div class="action-content">
+                                    <h3 class="action-title">Manage Problems</h3>
+                                    <p class="action-description">Edit, update, or delete existing problems</p>
+                                </div>
+                                <div class="action-arrow">→</div>
+                            </a>
+
+                            <!-- View Submissions -->
+                            <a href="{{ url_for('admin_view_submissions') }}" class="action-card">
+                                <div class="action-icon">📊</div>
+                                <div class="action-content">
+                                    <h3 class="action-title">View All Submissions</h3>
+                                    <p class="action-description">Monitor user submissions and results</p>
+                                </div>
+                                <div class="action-arrow">→</div>
+                            </a>
+
+                            <!-- System Stats -->
+                            <a href="{{ url_for('admin_system_stats') }}" class="action-card">
+                                <div class="action-icon">📈</div>
+                                <div class="action-content">
+                                    <h3 class="action-title">System Analytics</h3>
+                                    <p class="action-description">Detailed platform performance metrics</p>
+                                </div>
+                                <div class="action-arrow">→</div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="col-lg-4">
+                <div class="admin-card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <span class="card-icon">🔄</span>
+                            Recent Activity
+                        </h2>
+                    </div>
+                    <div class="card-content">
+                        <div class="activity-list">
+                            {% if recent_submissions %}
+                                {% for submission in recent_submissions[:5] %}
+                                <div class="activity-item">
+                                    <div class="activity-icon status-{{ submission.result.lower() }}">
+                                        {% if submission.result == 'PASS' %}✅
+                                        {% elif submission.result == 'FAIL' %}❌
+                                        {% else %}⚠️{% endif %}
+                                    </div>
+                                    <div class="activity-content">
+                                        <div class="activity-title">{{ submission.user_name }}</div>
+                                        <div class="activity-description">
+                                            Problem #{{ submission.problem_id }} - {{ submission.language }}
+                                        </div>
+                                        <div class="activity-time">{{ submission.submitted_at.strftime('%Y-%m-%d %H:%M') }}</div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="activity-empty">
+                                    <div class="empty-icon">📭</div>
+                                    <div class="empty-text">No recent activity</div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .admin-panel {
+        background: var(--bg-primary);
+        min-height: 100vh;
+    }
+
+    .admin-header {
+        background: var(--bg-secondary);
+        border-bottom: 1px solid var(--border-primary);
+    }
+
+    .admin-icon {
+        font-size: 2rem;
+        margin-right: 0.5rem;
+    }
+
+    .admin-status {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .status-indicator {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        background: rgba(0, 255, 136, 0.1);
+        border: 1px solid var(--accent-primary);
+        border-radius: 0.5rem;
+        font-family: var(--font-mono);
+        font-size: 0.875rem;
+        color: var(--accent-primary);
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-primary);
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+        border-color: var(--accent-primary);
+        box-shadow: 0 4px 20px rgba(0, 255, 136, 0.1);
+    }
+
+    .stat-icon {
+        font-size: 2rem;
+        opacity: 0.8;
+    }
+
+    .stat-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        font-family: var(--font-mono);
+    }
+
+    .stat-label {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .admin-card {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-primary);
+        border-radius: 0.75rem;
+        overflow: hidden;
+        margin-bottom: 2rem;
+    }
+
+    .card-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid var(--border-primary);
+        background: rgba(0, 255, 136, 0.05);
+    }
+
+    .card-title {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 0;
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .card-icon {
+        font-size: 1.5rem;
+    }
+
+    .card-content {
+        padding: 1.5rem;
+    }
+
+    .action-grid {
+        display: grid;
+        gap: 1rem;
+    }
+
+    .action-card {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1.5rem;
+        background: var(--bg-primary);
+        border: 1px solid var(--border-primary);
+        border-radius: 0.5rem;
+        text-decoration: none;
+        color: inherit;
+        transition: all 0.3s ease;
+    }
+
+    .action-card:hover {
+        border-color: var(--accent-primary);
+        background: rgba(0, 255, 136, 0.05);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0, 255, 136, 0.1);
+    }
+
+    .action-icon {
+        font-size: 2rem;
+        width: 3rem;
+        height: 3rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 255, 136, 0.1);
+        border-radius: 0.5rem;
+        color: var(--accent-primary);
+    }
+
+    .action-content {
+        flex: 1;
+    }
+
+    .action-title {
+        margin: 0 0 0.25rem 0;
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .action-description {
+        margin: 0;
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+    }
+
+    .action-arrow {
+        font-size: 1.25rem;
+        color: var(--accent-primary);
+        opacity: 0.7;
+        transition: all 0.3s ease;
+    }
+
+    .action-card:hover .action-arrow {
+        opacity: 1;
+        transform: translateX(4px);
+    }
+
+    .activity-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .activity-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+        padding: 1rem;
+        background: var(--bg-primary);
+        border-radius: 0.5rem;
+        border: 1px solid var(--border-primary);
+        margin-bottom: 0.75rem;
+    }
+
+    .activity-icon {
+        font-size: 1.25rem;
+        width: 2rem;
+        height: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+
+    .activity-icon.status-pass {
+        background: rgba(40, 167, 69, 0.2);
+    }
+
+    .activity-icon.status-fail {
+        background: rgba(220, 53, 69, 0.2);
+    }
+
+    .activity-icon.status-error {
+        background: rgba(253, 126, 20, 0.2);
+    }
+
+    .activity-content {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .activity-title {
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 0.25rem;
+    }
+
+    .activity-description {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        margin-bottom: 0.25rem;
+    }
+
+    .activity-time {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        font-family: var(--font-mono);
+    }
+
+    .activity-empty {
+        text-align: center;
+        padding: 2rem;
+        color: var(--text-secondary);
+    }
+
+    .empty-icon {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+        opacity: 0.5;
+    }
+
+    .empty-text {
+        font-size: 0.875rem;
+    }
+
+    @media (max-width: 768px) {
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .stat-card {
+            padding: 1rem;
+        }
+
+        .action-card {
+            padding: 1rem;
+        }
+
+        .activity-item {
+            padding: 0.75rem;
+        }
+    }
+</style>
+{% endblock %}

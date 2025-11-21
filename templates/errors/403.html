@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Access Forbidden - CodeXam{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-ban me-2"></i>
+                        Access Forbidden (403)
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <h5>Access Denied</h5>
+                    <p class="text-muted">
+                        You don't have permission to access this resource. This could be due to:
+                    </p>
+                    <ul class="text-muted">
+                        <li>Insufficient privileges</li>
+                        <li>Security restrictions</li>
+                        <li>Rate limiting</li>
+                        <li>Invalid authentication</li>
+                    </ul>
+                    
+                    <div class="mt-4">
+                        <h6>What can you do?</h6>
+                        <div class="d-grid gap-2 d-md-flex">
+                            <a href="{{ url_for('index') }}" class="btn btn-primary">
+                                <i class="fas fa-home me-1"></i>
+                                Go Home
+                            </a>
+                            <a href="{{ url_for('set_name') }}" class="btn btn-outline-primary">
+                                <i class="fas fa-user me-1"></i>
+                                Set Your Name
+                            </a>
+                            <button onclick="history.back()" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-1"></i>
+                                Go Back
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Bad Request - CodeXam{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-warning">
+                <div class="card-header bg-warning text-dark">
+                    <h4 class="mb-0">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Bad Request (400)
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <h5>Invalid Request</h5>
+                    <p class="text-muted">
+                        The request you sent to the server was invalid or malformed. 
+                        This could be due to:
+                    </p>
+                    <ul class="text-muted">
+                        <li>Missing required parameters</li>
+                        <li>Invalid data format</li>
+                        <li>Unsupported request method</li>
+                        <li>Malformed request headers</li>
+                    </ul>
+                    
+                    <div class="mt-4">
+                        <h6>What can you do?</h6>
+                        <div class="d-grid gap-2 d-md-flex">
+                            <a href="{{ url_for('index') }}" class="btn btn-primary">
+                                <i class="fas fa-home me-1"></i>
+                                Go Home
+                            </a>
+                            <a href="{{ url_for('problems_list') }}" class="btn btn-outline-primary">
+                                <i class="fas fa-list me-1"></i>
+                                View Problems
+                            </a>
+                            <button onclick="history.back()" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-1"></i>
+                                Go Back
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

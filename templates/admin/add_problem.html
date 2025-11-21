@@ -1,0 +1,767 @@
+{% extends "base.html" %}
+
+{% block title %}Add Problem - Admin Panel{% endblock %}
+
+{% block body_class %}admin-add-problem{% endblock %}
+
+{% block content %}
+<!-- Admin Header -->
+<section class="admin-header py-4">
+    <div class="container">
+        <div class="header-content d-flex justify-content-between align-items-center">
+            <div class="header-title-section">
+                <h1 class="section-title mb-2">
+                    <span class="admin-icon">➕</span>
+                    Add New <span class="text-accent">Problem</span>
+                </h1>
+                <p class="section-subtitle text-secondary mb-0">
+                    Create a new coding challenge for the platform.
+                </p>
+            </div>
+            <a href="{{ url_for('admin_panel') }}" class="btn btn-outline-accent">
+                ← Back to Admin Panel
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Add Problem Form -->
+<section class="add-problem-form py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <form id="addProblemForm" method="POST" enctype="multipart/form-data">
+                    <div class="form-container">
+                        <!-- Basic Information -->
+                        <div class="form-section">
+                            <div class="section-header">
+                                <h2 class="section-title">
+                                    <span class="section-icon">📝</span>
+                                    Basic Information
+                                </h2>
+                                <p class="section-description">Problem title, description, and metadata</p>
+                            </div>
+
+                            <div class="section-content">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <div class="form-group">
+                                            <label for="title" class="form-label required">Problem Title</label>
+                                            <input type="text" 
+                                                   class="form-control" 
+                                                   id="title" 
+                                                   name="title" 
+                                                   placeholder="e.g., Two Sum"
+                                                   required>
+                                            <div class="form-help">Choose a clear, descriptive title for the problem</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="difficulty" class="form-label required">Difficulty</label>
+                                            <select class="form-control" id="difficulty" name="difficulty" required>
+                                                <option value="">Select Difficulty</option>
+                                                <option value="Easy">Easy</option>
+                                                <option value="Medium">Medium</option>
+                                                <option value="Hard">Hard</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="description" class="form-label required">Problem Description</label>
+                                    <textarea class="form-control" 
+                                              id="description" 
+                                              name="description" 
+                                              rows="8" 
+                                              placeholder="Provide a clear problem statement with examples..."
+                                              required></textarea>
+                                    <div class="form-help">
+                                        Use Markdown formatting. Include problem statement, constraints, and examples.
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="time_limit" class="form-label required">Time Limit (seconds)</label>
+                                            <input type="number" 
+                                                   class="form-control" 
+                                                   id="time_limit" 
+                                                   name="time_limit" 
+                                                   value="1" 
+                                                   min="0.1" 
+                                                   max="30" 
+                                                   step="0.1"
+                                                   required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="memory_limit" class="form-label required">Memory Limit (MB)</label>
+                                            <input type="number" 
+                                                   class="form-control" 
+                                                   id="memory_limit" 
+                                                   name="memory_limit" 
+                                                   value="128" 
+                                                   min="32" 
+                                                   max="512"
+                                                   required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Language Support -->
+                        <div class="form-section">
+                            <div class="section-header">
+                                <h2 class="section-title">
+                                    <span class="section-icon">💻</span>
+                                    Language Support
+                                </h2>
+                                <p class="section-description">Configure supported programming languages and function signatures</p>
+                            </div>
+
+                            <div class="section-content">
+                                <div class="language-tabs">
+                                    <div class="tab-buttons">
+                                        <button type="button" class="tab-btn active" data-tab="python">Python</button>
+                                        <button type="button" class="tab-btn" data-tab="javascript">JavaScript</button>
+                                        <button type="button" class="tab-btn" data-tab="java">Java</button>
+                                        <button type="button" class="tab-btn" data-tab="cpp">C++</button>
+                                    </div>
+
+                                    <!-- Python Tab -->
+                                    <div class="tab-content active" id="python-tab">
+                                        <div class="form-group">
+                                            <label class="form-label">
+                                                <input type="checkbox" class="language-checkbox" name="languages" value="python" checked>
+                                                Enable Python Support
+                                            </label>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="python_signature" class="form-label">Function Signature</label>
+                                            <textarea class="form-control code-input" 
+                                                      id="python_signature" 
+                                                      name="python_signature" 
+                                                      rows="4" 
+                                                      placeholder="def solution(nums, target):
+    # Your code here
+    pass"></textarea>
+                                        </div>
+                                    </div>
+
+                                    <!-- JavaScript Tab -->
+                                    <div class="tab-content" id="javascript-tab">
+                                        <div class="form-group">
+                                            <label class="form-label">
+                                                <input type="checkbox" class="language-checkbox" name="languages" value="javascript">
+                                                Enable JavaScript Support
+                                            </label>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="javascript_signature" class="form-label">Function Signature</label>
+                                            <textarea class="form-control code-input" 
+                                                      id="javascript_signature" 
+                                                      name="javascript_signature" 
+                                                      rows="4" 
+                                                      placeholder="function solution(nums, target) {
+    // Your code here
+}"></textarea>
+                                        </div>
+                                    </div>
+
+                                    <!-- Java Tab -->
+                                    <div class="tab-content" id="java-tab">
+                                        <div class="form-group">
+                                            <label class="form-label">
+                                                <input type="checkbox" class="language-checkbox" name="languages" value="java">
+                                                Enable Java Support
+                                            </label>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="java_signature" class="form-label">Function Signature</label>
+                                            <textarea class="form-control code-input" 
+                                                      id="java_signature" 
+                                                      name="java_signature" 
+                                                      rows="6" 
+                                                      placeholder="public class Solution {
+    public int[] solution(int[] nums, int target) {
+        // Your code here
+        return new int[]{};
+    }
+}"></textarea>
+                                        </div>
+                                    </div>
+
+                                    <!-- C++ Tab -->
+                                    <div class="tab-content" id="cpp-tab">
+                                        <div class="form-group">
+                                            <label class="form-label">
+                                                <input type="checkbox" class="language-checkbox" name="languages" value="cpp">
+                                                Enable C++ Support
+                                            </label>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="cpp_signature" class="form-label">Function Signature</label>
+                                            <textarea class="form-control code-input" 
+                                                      id="cpp_signature" 
+                                                      name="cpp_signature" 
+                                                      rows="5" 
+                                                      placeholder="#include <vector>
+using namespace std;
+
+vector<int> solution(vector<int>& nums, int target) {
+    // Your code here
+    return {};
+}"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Test Cases -->
+                        <div class="form-section">
+                            <div class="section-header">
+                                <h2 class="section-title">
+                                    <span class="section-icon">🧪</span>
+                                    Test Cases
+                                </h2>
+                                <p class="section-description">Define input/output test cases for validation</p>
+                            </div>
+
+                            <div class="section-content">
+                                <div id="testCases">
+                                    <!-- Test Case Template -->
+                                    <div class="test-case-item" data-index="0">
+                                        <div class="test-case-header">
+                                            <h4 class="test-case-title">Test Case 1</h4>
+                                            <div class="test-case-actions">
+                                                <label class="form-label">
+                                                    <input type="checkbox" class="example-checkbox" name="example_0" checked>
+                                                    Show as Example
+                                                </label>
+                                                <button type="button" class="btn btn-sm btn-outline-danger remove-test-case">
+                                                    Remove
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div class="test-case-content">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label class="form-label required">Input</label>
+                                                        <textarea class="form-control code-input" 
+                                                                  name="input_0" 
+                                                                  rows="4" 
+                                                                  placeholder="[2,7,11,15]
+9"
+                                                                  required></textarea>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label class="form-label required">Expected Output</label>
+                                                        <textarea class="form-control code-input" 
+                                                                  name="output_0" 
+                                                                  rows="4" 
+                                                                  placeholder="[0,1]"
+                                                                  required></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="form-label">Explanation (Optional)</label>
+                                                <input type="text" 
+                                                       class="form-control" 
+                                                       name="explanation_0" 
+                                                       placeholder="Because nums[0] + nums[1] == 9, we return [0, 1].">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="test-case-actions-footer">
+                                    <button type="button" class="btn btn-outline-accent" id="addTestCase">
+                                        <span class="btn-icon">➕</span>
+                                        Add Test Case
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="form-actions">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="form-info">
+                                    <small class="text-secondary">
+                                        <span class="text-accent">*</span> Required fields
+                                    </small>
+                                </div>
+                                <div class="action-buttons">
+                                    <a href="{{ url_for('admin_panel') }}" class="btn btn-secondary">Cancel</a>
+                                    <button type="submit" class="btn btn-accent" id="submitProblem">
+                                        <span class="btn-icon">💾</span>
+                                        Create Problem
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .admin-add-problem {
+        background: var(--bg-primary);
+        min-height: 100vh;
+    }
+
+    .admin-header {
+        background: var(--bg-secondary);
+        border-bottom: 1px solid var(--border-primary);
+    }
+
+    .admin-icon {
+        font-size: 1.5rem;
+        margin-right: 0.5rem;
+    }
+
+    .form-container {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-primary);
+        border-radius: 0.75rem;
+        overflow: hidden;
+    }
+
+    .form-section {
+        border-bottom: 1px solid var(--border-primary);
+    }
+
+    .form-section:last-child {
+        border-bottom: none;
+    }
+
+    .section-header {
+        padding: 2rem;
+        background: rgba(0, 255, 136, 0.05);
+        border-bottom: 1px solid var(--border-primary);
+    }
+
+    .section-title {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 0 0 0.5rem 0;
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .section-icon {
+        font-size: 1.75rem;
+    }
+
+    .section-description {
+        margin: 0;
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+    }
+
+    .section-content {
+        padding: 2rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: var(--text-primary);
+        font-size: 0.95rem;
+    }
+
+    .form-label.required::after {
+        content: " *";
+        color: var(--accent-primary);
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        background: var(--bg-primary);
+        border: 1px solid var(--border-primary);
+        border-radius: 0.5rem;
+        color: var(--text-primary);
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--accent-primary);
+        box-shadow: 0 0 0 3px rgba(0, 255, 136, 0.1);
+    }
+
+    .form-control::placeholder {
+        color: var(--text-muted);
+    }
+
+    .code-input {
+        font-family: var(--font-mono);
+        font-size: 0.875rem;
+        line-height: 1.5;
+    }
+
+    .form-help {
+        margin-top: 0.25rem;
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+    }
+
+    .language-tabs {
+        background: var(--bg-primary);
+        border: 1px solid var(--border-primary);
+        border-radius: 0.5rem;
+        overflow: hidden;
+    }
+
+    .tab-buttons {
+        display: flex;
+        background: var(--bg-secondary);
+        border-bottom: 1px solid var(--border-primary);
+    }
+
+    .tab-btn {
+        flex: 1;
+        padding: 1rem;
+        background: transparent;
+        border: none;
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border-right: 1px solid var(--border-primary);
+    }
+
+    .tab-btn:last-child {
+        border-right: none;
+    }
+
+    .tab-btn.active,
+    .tab-btn:hover {
+        background: rgba(0, 255, 136, 0.1);
+        color: var(--accent-primary);
+    }
+
+    .tab-content {
+        display: none;
+        padding: 1.5rem;
+    }
+
+    .tab-content.active {
+        display: block;
+    }
+
+    .language-checkbox {
+        margin-right: 0.5rem;
+        accent-color: var(--accent-primary);
+    }
+
+    .test-case-item {
+        background: var(--bg-primary);
+        border: 1px solid var(--border-primary);
+        border-radius: 0.5rem;
+        margin-bottom: 1.5rem;
+        overflow: hidden;
+    }
+
+    .test-case-header {
+        display: flex;
+        justify-content: between;
+        align-items: center;
+        padding: 1rem 1.5rem;
+        background: rgba(0, 255, 136, 0.05);
+        border-bottom: 1px solid var(--border-primary);
+    }
+
+    .test-case-title {
+        margin: 0;
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        flex: 1;
+    }
+
+    .test-case-actions {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .test-case-content {
+        padding: 1.5rem;
+    }
+
+    .example-checkbox {
+        margin-right: 0.5rem;
+        accent-color: var(--accent-primary);
+    }
+
+    .remove-test-case {
+        padding: 0.25rem 0.75rem;
+        font-size: 0.875rem;
+    }
+
+    .test-case-actions-footer {
+        text-align: center;
+        padding: 1rem;
+    }
+
+    .form-actions {
+        padding: 2rem;
+        background: var(--bg-secondary);
+        border-top: 1px solid var(--border-primary);
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        font-weight: 500;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        border: 1px solid transparent;
+    }
+
+    .btn-accent {
+        background: var(--accent-primary);
+        color: var(--bg-primary);
+        border-color: var(--accent-primary);
+    }
+
+    .btn-accent:hover {
+        background: var(--accent-secondary);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0, 255, 136, 0.3);
+    }
+
+    .btn-outline-accent {
+        background: transparent;
+        color: var(--accent-primary);
+        border-color: var(--accent-primary);
+    }
+
+    .btn-outline-accent:hover {
+        background: rgba(0, 255, 136, 0.1);
+    }
+
+    .btn-secondary {
+        background: var(--bg-primary);
+        color: var(--text-secondary);
+        border-color: var(--border-primary);
+    }
+
+    .btn-secondary:hover {
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+    }
+
+    .btn-outline-danger {
+        background: transparent;
+        color: #dc3545;
+        border-color: #dc3545;
+    }
+
+    .btn-outline-danger:hover {
+        background: rgba(220, 53, 69, 0.1);
+    }
+
+    .btn-sm {
+        padding: 0.375rem 0.75rem;
+        font-size: 0.875rem;
+    }
+
+    .btn-icon {
+        font-size: 1rem;
+    }
+
+    .form-info {
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+    }
+
+    @media (max-width: 768px) {
+        .section-header,
+        .section-content,
+        .form-actions {
+            padding: 1.5rem;
+        }
+
+        .tab-buttons {
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            flex: 1 1 50%;
+        }
+
+        .test-case-header {
+            flex-direction: column;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+
+        .test-case-actions {
+            align-self: stretch;
+            justify-content: space-between;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Tab switching functionality
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const tabId = this.dataset.tab;
+                
+                // Remove active class from all buttons and contents
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                tabContents.forEach(content => content.classList.remove('active'));
+                
+                // Add active class to clicked button and corresponding content
+                this.classList.add('active');
+                document.getElementById(tabId + '-tab').classList.add('active');
+            });
+        });
+
+        // Test case management
+        let testCaseIndex = 1;
+
+        document.getElementById('addTestCase').addEventListener('click', function() {
+            const testCasesContainer = document.getElementById('testCases');
+            const newTestCase = createTestCaseElement(testCaseIndex);
+            testCasesContainer.appendChild(newTestCase);
+            testCaseIndex++;
+        });
+
+        function createTestCaseElement(index) {
+            const div = document.createElement('div');
+            div.className = 'test-case-item';
+            div.dataset.index = index;
+            div.innerHTML = `
+                <div class="test-case-header">
+                    <h4 class="test-case-title">Test Case ${index + 1}</h4>
+                    <div class="test-case-actions">
+                        <label class="form-label">
+                            <input type="checkbox" class="example-checkbox" name="example_${index}">
+                            Show as Example
+                        </label>
+                        <button type="button" class="btn btn-sm btn-outline-danger remove-test-case">
+                            Remove
+                        </button>
+                    </div>
+                </div>
+                <div class="test-case-content">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label required">Input</label>
+                                <textarea class="form-control code-input" 
+                                          name="input_${index}" 
+                                          rows="4" 
+                                          required></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label required">Expected Output</label>
+                                <textarea class="form-control code-input" 
+                                          name="output_${index}" 
+                                          rows="4" 
+                                          required></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Explanation (Optional)</label>
+                        <input type="text" 
+                               class="form-control" 
+                               name="explanation_${index}">
+                    </div>
+                </div>
+            `;
+            return div;
+        }
+
+        // Remove test case functionality
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('remove-test-case')) {
+                const testCaseItem = e.target.closest('.test-case-item');
+                if (document.querySelectorAll('.test-case-item').length > 1) {
+                    testCaseItem.remove();
+                } else {
+                    alert('At least one test case is required.');
+                }
+            }
+        });
+
+        // Form validation
+        document.getElementById('addProblemForm').addEventListener('submit', function(e) {
+            const selectedLanguages = document.querySelectorAll('input[name="languages"]:checked');
+            if (selectedLanguages.length === 0) {
+                e.preventDefault();
+                alert('Please select at least one programming language.');
+                return;
+            }
+
+            // Validate that selected languages have signatures
+            let hasError = false;
+            selectedLanguages.forEach(checkbox => {
+                const language = checkbox.value;
+                const signatureField = document.getElementById(language + '_signature');
+                if (!signatureField.value.trim()) {
+                    hasError = true;
+                    alert(`Please provide a function signature for ${language}.`);
+                }
+            });
+
+            if (hasError) {
+                e.preventDefault();
+            }
+        });
+    });
+</script>
+{% endblock %}

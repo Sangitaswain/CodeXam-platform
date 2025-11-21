@@ -1,0 +1,571 @@
+{% extends "base.html" %}
+
+{% block title %}System Statistics - Admin Panel{% endblock %}
+
+{% block body_class %}admin-system-stats{% endblock %}
+
+{% block content %}
+<!-- Admin Header -->
+<section class="admin-header py-4">
+    <div class="container">
+        <div class="header-content d-flex justify-content-between align-items-center">
+            <div class="header-title-section">
+                <h1 class="section-title mb-2">
+                    <span class="admin-icon">📈</span>
+                    System <span class="text-accent">Statistics</span>
+                </h1>
+                <p class="section-subtitle text-secondary mb-0">
+                    Detailed platform analytics and performance metrics.
+                </p>
+            </div>
+            <a href="{{ url_for('admin_panel') }}" class="btn btn-outline-accent">
+                ← Back to Admin Panel
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- System Statistics -->
+<section class="system-stats py-5">
+    <div class="container">
+        <!-- Overview Stats -->
+        <div class="stats-overview mb-5">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">📚</div>
+                    <div class="stat-content">
+                        <div class="stat-value">{{ stats.total_problems }}</div>
+                        <div class="stat-label">Total Problems</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📝</div>
+                    <div class="stat-content">
+                        <div class="stat-value">{{ stats.total_submissions }}</div>
+                        <div class="stat-label">Total Submissions</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-content">
+                        <div class="stat-value">{{ stats.total_users }}</div>
+                        <div class="stat-label">Active Users</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⚡</div>
+                    <div class="stat-content">
+                        <div class="stat-value">{{ stats.success_rate }}%</div>
+                        <div class="stat-label">Success Rate</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Language Statistics -->
+            <div class="col-lg-6 mb-4">
+                <div class="stats-card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <span class="card-icon">💻</span>
+                            Language Popularity
+                        </h2>
+                    </div>
+                    <div class="card-content">
+                        {% if stats.language_stats %}
+                        <div class="language-stats">
+                            {% for lang in stats.language_stats %}
+                            <div class="language-item">
+                                <div class="language-info">
+                                    <span class="language-name">{{ lang.language }}</span>
+                                    <span class="language-count">{{ lang.count }} submissions</span>
+                                </div>
+                                <div class="language-bar">
+                                    {% set max_count = stats.language_stats[0].count %}
+                                    {% set percentage = (lang.count / max_count * 100) if max_count > 0 else 0 %}
+                                    <div class="bar-fill" style="width: {{ percentage }}%"></div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <div class="empty-stats">
+                            <div class="empty-icon">📊</div>
+                            <div class="empty-text">No language data available</div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Difficulty Distribution -->
+            <div class="col-lg-6 mb-4">
+                <div class="stats-card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <span class="card-icon">🎯</span>
+                            Difficulty Distribution
+                        </h2>
+                    </div>
+                    <div class="card-content">
+                        {% if stats.difficulty_stats %}
+                        <div class="difficulty-stats">
+                            {% for diff in stats.difficulty_stats %}
+                            <div class="difficulty-item">
+                                <div class="difficulty-header">
+                                    <span class="difficulty-badge difficulty-{{ diff.difficulty.lower() }}">
+                                        {{ diff.difficulty }}
+                                    </span>
+                                    <span class="difficulty-count">{{ diff.problem_count }} problems</span>
+                                </div>
+                                <div class="difficulty-metrics">
+                                    <div class="metric">
+                                        <span class="metric-label">Success Rate:</span>
+                                        <span class="metric-value">{{ "%.1f"|format((diff.success_rate or 0) * 100) }}%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <div class="empty-stats">
+                            <div class="empty-icon">🎯</div>
+                            <div class="empty-text">No difficulty data available</div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="col-lg-8 mb-4">
+                <div class="stats-card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <span class="card-icon">📅</span>
+                            Recent Activity (Last 7 Days)
+                        </h2>
+                    </div>
+                    <div class="card-content">
+                        {% if stats.activity_stats %}
+                        <div class="activity-chart">
+                            {% for activity in stats.activity_stats %}
+                            <div class="activity-day">
+                                <div class="day-label">{{ activity.date }}</div>
+                                <div class="day-bar">
+                                    {% set max_count = stats.activity_stats|map(attribute='count')|max %}
+                                    {% set percentage = (activity.count / max_count * 100) if max_count > 0 else 0 %}
+                                    <div class="bar-fill" style="height: {{ percentage }}%"></div>
+                                </div>
+                                <div class="day-count">{{ activity.count }}</div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <div class="empty-stats">
+                            <div class="empty-icon">📅</div>
+                            <div class="empty-text">No recent activity data</div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Users -->
+            <div class="col-lg-4 mb-4">
+                <div class="stats-card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <span class="card-icon">🏆</span>
+                            Top Users
+                        </h2>
+                    </div>
+                    <div class="card-content">
+                        {% if stats.top_users %}
+                        <div class="top-users">
+                            {% for user in stats.top_users %}
+                            <div class="user-item">
+                                <div class="user-rank">{{ loop.index }}</div>
+                                <div class="user-info">
+                                    <div class="user-name">{{ user.user_name }}</div>
+                                    <div class="user-stats">
+                                        <span class="solved">{{ user.solved_problems }} solved</span>
+                                        <span class="total">{{ user.total_submissions }} submissions</span>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <div class="empty-stats">
+                            <div class="empty-icon">👥</div>
+                            <div class="empty-text">No user data available</div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .admin-system-stats {
+        background: var(--bg-primary);
+        min-height: 100vh;
+    }
+
+    .admin-header {
+        background: var(--bg-secondary);
+        border-bottom: 1px solid var(--border-primary);
+    }
+
+    .admin-icon {
+        font-size: 1.5rem;
+        margin-right: 0.5rem;
+    }
+
+    .stats-overview {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-primary);
+        border-radius: 0.75rem;
+        padding: 2rem;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .stat-card {
+        background: var(--bg-primary);
+        border: 1px solid var(--border-primary);
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+        border-color: var(--accent-primary);
+        box-shadow: 0 4px 20px rgba(0, 255, 136, 0.1);
+    }
+
+    .stat-icon {
+        font-size: 2rem;
+        opacity: 0.8;
+    }
+
+    .stat-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        font-family: var(--font-mono);
+    }
+
+    .stat-label {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .stats-card {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-primary);
+        border-radius: 0.75rem;
+        overflow: hidden;
+        height: 100%;
+    }
+
+    .card-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid var(--border-primary);
+        background: rgba(0, 255, 136, 0.05);
+    }
+
+    .card-title {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 0;
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .card-icon {
+        font-size: 1.25rem;
+    }
+
+    .card-content {
+        padding: 1.5rem;
+        height: calc(100% - 80px);
+    }
+
+    .language-stats,
+    .difficulty-stats,
+    .top-users {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .language-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .language-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .language-name {
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .language-count {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        font-family: var(--font-mono);
+    }
+
+    .language-bar,
+    .day-bar {
+        height: 8px;
+        background: var(--bg-primary);
+        border-radius: 4px;
+        overflow: hidden;
+    }
+
+    .bar-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+        border-radius: 4px;
+        transition: width 0.6s ease;
+    }
+
+    .difficulty-item {
+        padding: 1rem;
+        background: var(--bg-primary);
+        border-radius: 0.5rem;
+        border: 1px solid var(--border-primary);
+    }
+
+    .difficulty-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+    }
+
+    .difficulty-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 1rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .difficulty-easy {
+        background: rgba(40, 167, 69, 0.2);
+        color: #28a745;
+    }
+
+    .difficulty-medium {
+        background: rgba(253, 126, 20, 0.2);
+        color: #fd7e14;
+    }
+
+    .difficulty-hard {
+        background: rgba(220, 53, 69, 0.2);
+        color: #dc3545;
+    }
+
+    .difficulty-count {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        font-family: var(--font-mono);
+    }
+
+    .difficulty-metrics {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .metric {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .metric-label {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+    }
+
+    .metric-value {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--accent-primary);
+        font-family: var(--font-mono);
+    }
+
+    .activity-chart {
+        display: flex;
+        align-items: end;
+        gap: 1rem;
+        height: 200px;
+        padding: 1rem 0;
+    }
+
+    .activity-day {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        height: 100%;
+    }
+
+    .day-label {
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+        font-family: var(--font-mono);
+    }
+
+    .day-bar {
+        flex: 1;
+        width: 100%;
+        background: var(--bg-primary);
+        border-radius: 4px;
+        display: flex;
+        align-items: end;
+    }
+
+    .day-count {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        font-family: var(--font-mono);
+    }
+
+    .user-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        background: var(--bg-primary);
+        border-radius: 0.5rem;
+        border: 1px solid var(--border-primary);
+    }
+
+    .user-rank {
+        width: 2rem;
+        height: 2rem;
+        background: var(--accent-primary);
+        color: var(--bg-primary);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.875rem;
+    }
+
+    .user-info {
+        flex: 1;
+    }
+
+    .user-name {
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 0.25rem;
+    }
+
+    .user-stats {
+        display: flex;
+        gap: 1rem;
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+    }
+
+    .solved {
+        color: var(--accent-primary);
+        font-weight: 600;
+    }
+
+    .empty-stats {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 150px;
+        color: var(--text-secondary);
+    }
+
+    .empty-icon {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+        opacity: 0.5;
+    }
+
+    .empty-text {
+        font-size: 0.875rem;
+    }
+
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        font-weight: 500;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        border: 1px solid transparent;
+    }
+
+    .btn-outline-accent {
+        background: transparent;
+        color: var(--accent-primary);
+        border-color: var(--accent-primary);
+    }
+
+    .btn-outline-accent:hover {
+        background: rgba(0, 255, 136, 0.1);
+    }
+
+    @media (max-width: 768px) {
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .activity-chart {
+            gap: 0.5rem;
+            height: 150px;
+        }
+
+        .day-label {
+            font-size: 0.625rem;
+        }
+
+        .day-count {
+            font-size: 0.75rem;
+        }
+    }
+</style>
+{% endblock %}
